@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @categorization %>
+
+<div>
+  <%= link_to "Edit this categorization", edit_categorization_path(@categorization) %> |
+  <%= link_to "Back to categorizations", categorizations_path %>
+
+  <%= button_to "Destroy this categorization", @categorization, method: :delete %>
+</div>

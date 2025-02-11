@@ -1,0 +1,2 @@
+class LibraryUser < User
+end

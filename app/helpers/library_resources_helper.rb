@@ -1,0 +1,2 @@
+module LibraryResourcesHelper
+end

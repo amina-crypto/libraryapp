@@ -1,0 +1,16 @@
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Categorizations" %>
+
+<h1>Categorizations</h1>
+
+<div id="categorizations">
+  <% @categorizations.each do |categorization| %>
+    <%= render categorization %>
+    <p>
+      <%= link_to "Show this categorization", categorization %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New categorization", new_categorization_path %>

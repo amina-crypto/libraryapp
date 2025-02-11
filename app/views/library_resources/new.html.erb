@@ -1,0 +1,11 @@
+<% content_for :title, "New library resource" %>
+
+<h1>New library resource</h1>
+
+<%= render "form", library_resource: @library_resource %>
+
+<br>
+
+<div>
+  <%= link_to "Back to library resources", library_resources_path %>
+</div>

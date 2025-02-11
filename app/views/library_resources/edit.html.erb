@@ -1,0 +1,12 @@
+<% content_for :title, "Editing library resource" %>
+
+<h1>Editing library resource</h1>
+
+<%= render "form", library_resource: @library_resource %>
+
+<br>
+
+<div>
+  <%= link_to "Show this library resource", @library_resource %> |
+  <%= link_to "Back to library resources", library_resources_path %>
+</div>

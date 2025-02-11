@@ -1,0 +1,11 @@
+<% content_for :title, "New journal" %>
+
+<h1>New journal</h1>
+
+<%= render "form", journal: @journal %>
+
+<br>
+
+<div>
+  <%= link_to "Back to journals", journals_path %>
+</div>

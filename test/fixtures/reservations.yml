@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  library_resource: one
+  reserved_at: 2025-02-08 23:17:26
+  expires_at: 2025-02-08 23:17:26
+  status: 1
+
+two:
+  user: two
+  library_resource: two
+  reserved_at: 2025-02-08 23:17:26
+  expires_at: 2025-02-08 23:17:26
+  status: 1

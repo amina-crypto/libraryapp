@@ -1,0 +1,2 @@
+class LibraryPersonnel < User
+end

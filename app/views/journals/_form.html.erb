@@ -1,0 +1,52 @@
+<%= form_with(model: journal) do |form| %>
+  <% if journal.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(journal.errors.count, "error") %> prohibited this journal from being saved:</h2>
+
+      <ul>
+        <% journal.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :title, style: "display: block" %>
+    <%= form.text_field :title %>
+  </div>
+
+  <div>
+    <%= form.label :publish_year, style: "display: block" %>
+    <%= form.number_field :publish_year %>
+  </div>
+
+  <div>
+    <%= form.label :language, style: "display: block" %>
+    <%= form.text_field :language %>
+  </div>
+
+  <div>
+    <%= form.label :publisher, style: "display: block" %>
+    <%= form.text_field :publisher %>
+  </div>
+
+  <div>
+    <%= form.label :description, style: "display: block" %>
+    <%= form.textarea :description %>
+  </div>
+
+  <div>
+    <%= form.label :volume, style: "display: block" %>
+    <%= form.number_field :volume %>
+  </div>
+
+  <div>
+    <%= form.label :issue, style: "display: block" %>
+    <%= form.number_field :issue %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>

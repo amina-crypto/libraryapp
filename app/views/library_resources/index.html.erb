@@ -1,0 +1,16 @@
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Library resources" %>
+
+<h1>Library resources</h1>
+
+<div id="library_resources">
+  <% @library_resources.each do |library_resource| %>
+    <%= render library_resource %>
+    <p>
+      <%= link_to "Show this library resource", library_resource %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New library resource", new_library_resource_path %>
