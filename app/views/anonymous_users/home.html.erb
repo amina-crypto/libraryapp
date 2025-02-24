@@ -1,0 +1,11 @@
+ <h2>Welcome to the Library</h2>
+
+<p>Search for books or journals:</p>
+<%= form_with url: search_resources_path, method: :get do %>
+  <%= label_tag :query, "Search by Title or Author" %>
+  <%= text_field_tag :query, params[:query] %>
+  <%= submit_tag "Search" %>
+<% end %>
+
+<p><%= link_to "Sign up for an account", new_user_registration_path %></p>
+

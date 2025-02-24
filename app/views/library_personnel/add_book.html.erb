@@ -1,0 +1,11 @@
+ <h2>Add a New Book</h2>
+
+<%= form_with model: @book, url: add_book_path, method: :post do |f| %>
+  <p><%= f.label :title, "Title" %> <%= f.text_field :title %></p>
+  <p><%= f.label :author, "Author" %> <%= f.text_field :author %></p>
+  <p><%= f.label :isbn, "ISBN" %> <%= f.text_field :isbn %></p>
+  <p><%= f.label :published_date, "Published Date" %> <%= f.date_select :published_date %></p>
+  <p><%= f.label :available, "Available" %> <%= f.check_box :available %></p>
+  <p><%= f.submit "Add Book" %></p>
+<% end %>
+

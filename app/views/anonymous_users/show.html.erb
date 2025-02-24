@@ -1,0 +1,16 @@
+ 
+<h2><%= @resource.title %></h2>
+<p>Author: <%= @resource.author %></p>
+<p>ISBN: <%= @resource.isbn %></p>
+<p>Published: <%= @resource.published_date %></p>
+<p>Availability: <%= @resource.available? ? "Available" : "Checked Out" %></p>
+
+<% if user_signed_in? %>
+  <% if @resource.available? %>
+    <%= button_to "Reserve Book", reserve_book_path(@resource), method: :post %>
+  <% else %>
+    <p>This book is currently unavailable.</p>
+  <% end %>
+<% else %>
+  <p><%= link_to "Log in to reserve this book", new_user_session_path %></p>
+<% end %>

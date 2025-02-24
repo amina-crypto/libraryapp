@@ -1,0 +1,8 @@
+ <h2>Your Past Loans</h2>
+
+<ul>
+  <% @past_loans.each do |loan| %>
+    <li><%= loan.resource.title %> - Borrowed on: <%= loan.loan_date %> - Returned on: <%= loan.return_date || "Not yet returned" %></li>
+  <% end %>
+</ul>
+

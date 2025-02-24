@@ -1,0 +1,12 @@
+ <h2>Manage Books</h2>
+<%= link_to "Add New Book", add_book_path %>
+
+<ul>
+  <% @books.each do |book| %>
+    <li>
+      <%= book.title %> - <%= book.author %>
+      <%= button_to "Remove", remove_book_path(book), method: :post, data: { confirm: "Are you sure?" } %>
+    </li>
+  <% end %>
+</ul>
+

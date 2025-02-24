@@ -1,0 +1,12 @@
+ <h2>Welcome, <%= current_user.email %>!</h2>
+
+<p>Your Borrowed Books:</p>
+<ul>
+  <% @borrowed_books.each do |book| %>
+    <li><%= book.title %> (Due on: <%= book.due_date %>)</li>
+  <% end %>
+</ul>
+
+<p><%= link_to "View Past Loans", borrowed_books_path %></p>
+<p><%= link_to "View Your Fines", fines_path %></p>
+

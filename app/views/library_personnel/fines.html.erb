@@ -1,0 +1,14 @@
+ 
+<h2>Unpaid Fines</h2>
+
+<ul>
+  <% @unpaid_fines.each do |fine| %>
+    <li>
+      User: <%= fine.user.email %> - 
+      Loan: <%= fine.loan.resource.title %> - 
+      Amount: <%= fine.amount %> Lek 
+      
+      <%= button_to "Mark as Collected", collect_fine_path(fine), method: :post %>
+    </li>
+  <% end %>
+</ul>

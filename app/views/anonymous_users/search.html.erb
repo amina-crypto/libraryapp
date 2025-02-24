@@ -1,0 +1,14 @@
+ <h2>Search Results</h2>
+
+<% if @resources.any? %>
+  <ul>
+    <% @resources.each do |resource| %>
+      <li>
+        <%= link_to resource.title, resource_details_path(resource) %> (by <%= resource.author %>)
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No results found. Try a different search query.</p>
+<% end %>
+

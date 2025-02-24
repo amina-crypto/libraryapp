@@ -1,0 +1,25 @@
+ <h2>All Loans</h2>
+
+<%= form_with url: list_loans_path, method: :get do %>
+  <%= label_tag :filter, "Filter by status:" %>
+  <%= select_tag :filter, options_for_select([["All", ""], ["Outstanding", "outstanding"], ["Overdue", "overdue"], ["Completed", "completed"]], params[:filter]) %>
+  <%= submit_tag "Apply" %>
+<% end %>
+
+<ul>
+  <% @loans.each do |loan| %>
+    <li>
+      <%= loan.resource.title %> - Borrowed by <%= loan.user.email %> 
+      (Due: <%= loan.due_date %>) 
+      
+      <% if loan.overdue? %>
+        - <strong style="color: red;">Overdue!</strong>
+      <% end %>
+
+      <% unless loan.completed? %>
+        <%= button_to "Close Loan", close_loan_path(loan), method: :post, data: { confirm: "Are you sure you want to close this loan?" } %>
+      <% end %>
+    </li>
+  <% end %>
+</ul>
+
