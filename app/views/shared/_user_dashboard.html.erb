@@ -1,0 +1,79 @@
+<div class="dashboard">
+  <div class="columns">
+    <div class="column is-3">
+      <div class="box">
+        <aside class="menu">
+          <p class="menu-label">
+            General
+          </p>
+          <ul class="menu-list">
+            <li><%= link_to "My Profile", edit_user_registration_path %></li>
+            <li><%= link_to "My Loans", user_loans_path %></li>
+            <li><%= link_to "My Reservations", user_reservations_path %></li>
+          </ul>
+          
+          <p class="menu-label">
+            Fines
+          </p>
+          <ul class="menu-list">
+            <li><%= link_to "Outstanding Fines", user_fines_path %></li>
+            <li><%= link_to "Fine History", user_fine_history_path %></li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+
+    <div class="column is-9">
+      <div class="box">
+        <h2 class="title is-4">Current Status</h2>
+        
+        <div class="columns is-multiline">
+          <div class="column is-6">
+            <div class="notification is-info">
+              <p class="title is-5">Active Loans</p>
+              <p class="subtitle is-1"><%= @active_loans_count %></p>
+            </div>
+          </div>
+          
+          <div class="column is-6">
+            <div class="notification <%= @overdue_loans_count > 0 ? 'is-danger' : 'is-success' %>">
+              <p class="title is-5">Overdue Items</p>
+              <p class="subtitle is-1"><%= @overdue_loans_count %></p>
+            </div>
+          </div>
+          
+          <div class="column is-6">
+            <div class="notification is-warning">
+              <p class="title is-5">Outstanding Fines</p>
+              <p class="subtitle is-1">$<%= @outstanding_fines_amount %></p>
+            </div>
+          </div>
+          
+          <div class="column is-6">
+            <div class="notification is-primary">
+              <p class="title is-5">Active Reservations</p>
+              <p class="subtitle is-1"><%= @active_reservations_count %></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="box">
+        <h2 class="title is-4">Recent Activity</h2>
+        <table class="table is-fullwidth">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Activity</th>
+              <th>Resource</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <%= render partial: "shared/activity_row", collection: @recent_activities, as: :activity %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div> 

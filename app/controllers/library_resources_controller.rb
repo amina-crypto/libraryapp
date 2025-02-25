@@ -3,7 +3,7 @@ class LibraryResourcesController < ApplicationController
 
   # GET /library_resources or /library_resources.json
   def index
-    @library_resources = LibraryResource.all
+    @library_resources = LibraryResource.all.includes(:resourceable)
   end
 
   # GET /library_resources/1 or /library_resources/1.json
@@ -12,7 +12,13 @@ class LibraryResourcesController < ApplicationController
 
   # GET /library_resources/new
   def new
-    @library_resource = LibraryResource.new
+    if params[:type] == "Book"
+      @library_resource = Book.new
+    elsif params[:type] == "Journal"
+      @library_resource = Journal.new
+    else
+      @library_resource = LibraryResource.new
+    end
   end
 
   # GET /library_resources/1/edit
@@ -21,7 +27,13 @@ class LibraryResourcesController < ApplicationController
 
   # POST /library_resources or /library_resources.json
   def create
-    @library_resource = LibraryResource.new(library_resource_params)
+    if params[:library_resource][:type] == "Book"
+      @library_resource = Book.new(library_resource_params)
+    elsif params[:library_resource][:type] == "Journal"
+      @library_resource = Journal.new(library_resource_params)
+    else
+      @library_resource = LibraryResource.new(library_resource_params)
+    end
 
     respond_to do |format|
       if @library_resource.save
@@ -49,10 +61,9 @@ class LibraryResourcesController < ApplicationController
 
   # DELETE /library_resources/1 or /library_resources/1.json
   def destroy
-    @library_resource.destroy!
-
+    @library_resource.destroy
     respond_to do |format|
-      format.html { redirect_to library_resources_path, status: :see_other, notice: "Library resource was successfully destroyed." }
+      format.html { redirect_to library_resources_url, notice: "Library resource was successfully destroyed." }
       format.json { head :no_content }
     end
   end
@@ -60,12 +71,11 @@ class LibraryResourcesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_library_resource
-      @library_resource = LibraryResource.find(params.expect(:id))
+      @library_resource = LibraryResource.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
-
     def library_resource_params
-      params.require(:library_resource).permit(:title, :publish_year, :language, :publisher, :description, :type, :author)
+      params.require(:library_resource).permit(:title, :publish_year, :language, :publisher, :description, :type)
     end
 end

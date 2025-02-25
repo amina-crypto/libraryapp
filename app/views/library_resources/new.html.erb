@@ -1,6 +1,24 @@
-<% content_for :title, "New library resource" %>
+<% content_for :title, "New Library Resource" %>
 
-<h1>New library resource</h1>
+<h1>New Library Resource</h1>
+
+<label for="resource_type">Select Resource Type:</label>
+<select id="resource_type" name="library_resource[type]">
+  <option value="Book">Book</option>
+  <option value="Journal">Journal</option>
+</select>
+
+<div id="book_fields" style="display: none;">
+  <%= label_tag :author, "Author" %>
+  <%= text_field_tag "library_resource[author]" %>
+</div>
+
+<div id="journal_fields" style="display: none;">
+  <%= label_tag :volume, "Volume" %>
+  <%= text_field_tag "library_resource[volume]" %>
+  <%= label_tag :issue, "Issue" %>
+  <%= text_field_tag "library_resource[issue]" %>
+</div>
 
 <%= render "form", library_resource: @library_resource %>
 
@@ -9,3 +27,11 @@
 <div>
   <%= link_to "Back to library resources", library_resources_path %>
 </div>
+
+<script>
+  document.getElementById("resource_type").addEventListener("change", function() {
+    var type = this.value;
+    document.getElementById("book_fields").style.display = (type == "Book") ? "block" : "none";
+    document.getElementById("journal_fields").style.display = (type == "Journal") ? "block" : "none";
+  });
+</script>

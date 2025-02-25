@@ -1,0 +1,56 @@
+<div class="table-container">
+  <table class="table is-fullwidth is-striped">
+    <thead>
+      <tr>
+        <th>Resource</th>
+        <th>User</th>
+        <th>Loan Date</th>
+        <th>Due Date</th>
+        <th>Status</th>
+        <th>Fine</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% loans.each do |loan| %>
+        <tr class="<%= 'has-text-danger' if loan.overdue? %>">
+          <td>
+            <%= link_to loan.resource.title, resource_details_path(loan.resource) %>
+            <small class="has-text-grey">
+              (<%= loan.resource.type %>)
+            </small>
+          </td>
+          <td><%= loan.user.full_name %></td>
+          <td><%= loan.loan_date.strftime("%B %d, %Y") %></td>
+          <td><%= loan.due_date.strftime("%B %d, %Y") %></td>
+          <td>
+            <span class="tag <%= loan_status_class(loan) %>">
+              <%= loan.status.titleize %>
+            </span>
+          </td>
+          <td>
+            <% if loan.fine.present? %>
+              <span class="has-text-danger">
+                $<%= loan.fine.amount %>
+              </span>
+            <% end %>
+          </td>
+          <td>
+            <div class="buttons are-small">
+              <% if loan.active? %>
+                <%= button_to "Return", return_loan_path(loan), 
+                    method: :patch, 
+                    class: "button is-success" %>
+              <% end %>
+              <% if loan.overdue? %>
+                <%= button_to "Process Fine", process_fine_loan_path(loan), 
+                    method: :patch, 
+                    class: "button is-warning" %>
+              <% end %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div> 

@@ -1,12 +1,17 @@
 class UsersController < ApplicationController
   before_action :authenticate_user!
   before_action :set_user, only: %i[ show edit update destroy ]
-  before_action :authorize_admin, only: [:index, :destroy]
+  before_action :authorize_admin, only: [ :index, :destroy ]
 
   # GET /users or /users.json
   def index
-    @users = User.all
+    if current_user.is_a?(LibraryPersonnel)
+      @users = LibraryUser.all # Library personnel can only manage library users
+    else
+      redirect_to root_path, alert: "Access denied."
+    end
   end
+
 
   # GET /users/1 or /users/1.json
   def show
@@ -18,8 +23,7 @@ class UsersController < ApplicationController
   end
 
   # GET /users/1/edit
-  def edit
-  end
+  #
 
   # # POST /users or /users.json
   # def create
@@ -69,8 +73,13 @@ class UsersController < ApplicationController
 
     # Only allow a list of trusted parameters through and the create method for the user
     def user_params
-      params.require(:user).permit(:name, :surname, :contact_address, :email, :password, :password_confirmation, :role)
+      if action_name == "update"
+        params.require(:user).permit(:name, :surname, :contact_address, :password, :password_confirmation)
+      else
+        params.require(:user).permit(:name, :surname, :contact_address, :email, :password, :password_confirmation, :role)
+      end
     end
+
 
     def create
       role_class = params[:user][:role].constantize # Convert role string to class
@@ -83,7 +92,7 @@ class UsersController < ApplicationController
         render :new, status: :unprocessable_entity
       end
     end
-    # Ensure only LibraryPersonnel can manage users
+  # Ensure only LibraryPersonnel can manage users
   def authorize_admin
     redirect_to root_path, alert: "Access denied." unless current_user.is_a?(LibraryPersonnel)
   end

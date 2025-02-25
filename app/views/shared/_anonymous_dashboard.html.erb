@@ -1,0 +1,37 @@
+<div class="dashboard">
+  <h1 class="title is-2 dashboard-title">Welcome to Library System</h1>
+  
+  <div class="tiles">
+    <div class="columns">
+      <div class="column">
+        <div class="box">
+          <h2 class="title is-4">Search Resources</h2>
+          <%= form_tag search_resources_path, method: :get, class: "field has-addons" do %>
+            <div class="control is-expanded">
+              <%= text_field_tag :query, params[:query], class: "input", placeholder: "Search books or journals..." %>
+            </div>
+            <div class="control">
+              <%= submit_tag "Search", class: "button is-primary" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="columns">
+    <div class="column is-half">
+      <div class="box">
+        <h2 class="title is-4">Latest Books</h2>
+        <%= render partial: "books/book_card", collection: @latest_books, as: :book %>
+      </div>
+    </div>
+    
+    <div class="column is-half">
+      <div class="box">
+        <h2 class="title is-4">Latest Journals</h2>
+        <%= render partial: "journals/journal_card", collection: @latest_journals, as: :journal %>
+      </div>
+    </div>
+  </div>
+</div> 

@@ -12,8 +12,9 @@ def manage_books
 end
 
 def manage_users
-  @users = LibraryUser.all
+  @users = LibraryUser.where.not(id: current_user.id) # Exclude themselves
 end
+
 
 def add_book
   @book = Book.new(book_params)

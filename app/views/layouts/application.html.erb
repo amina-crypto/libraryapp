@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Libraryapp" %></title>
+    <title><%= content_for(:title) || "Library Management System" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -17,30 +17,91 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%# Add Bulma and Font Awesome via CDN %>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <%# Display Flash Messages for Devise (Success, Errors, Alerts) %>
-    <% flash.each do |key, message| %>
-      <div class="alert alert-<%= key %>"><%= message %></div>
-    <% end %>
+  <body class="has-navbar-fixed-top">
+    <!-- Navbar -->
+    <nav class="navbar is-fixed-top is-primary">
+      <div class="navbar-brand">
+        <%= link_to root_path, class: "navbar-item" do %>
+          <span class="icon">
+            <i class="fas fa-book-reader"></i>
+          </span>
+          <span class="has-text-weight-bold">Library System</span>
+        <% end %>
 
-    <%# Navigation Bar %>
-    <nav>
-      <% if user_signed_in? %>
-        <p>Welcome, <%= current_user.email %>!</p>
-        <%= link_to "Logout", destroy_user_session_path, method: :delete, class: "btn btn-danger" %>
-      <% else %>
-        <%= link_to "Login", new_user_session_path, class: "btn btn-primary" %> |
-        <%= link_to "Sign up", new_user_registration_path, class: "btn btn-secondary" %>
-      <% end %>
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div class="navbar-menu">
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <% if user_signed_in? %>
+              <div class="buttons">
+                <span class="tag is-info is-medium mr-2">
+                  Logged as <%= current_user.library_personnel? ? "personnel" : "user" %>: 
+                  <%= "#{current_user.name} #{current_user.surname}" %>
+                </span>
+                <%= link_to destroy_user_session_path, method: :delete, class: "button is-light" do %>
+                  <span class="icon">
+                    <i class="fas fa-sign-out-alt"></i>
+                  </span>
+                  <span>Logout</span>
+                <% end %>
+              </div>
+            <% else %>
+              <div class="buttons">
+                <%= link_to new_user_registration_path, class: "button is-primary" do %>
+                  <span class="icon">
+                    <i class="fas fa-user-plus"></i>
+                  </span>
+                  <span>Sign up</span>
+                <% end %>
+                <%= link_to new_user_session_path, class: "button is-light" do %>
+                  <span class="icon">
+                    <i class="fas fa-sign-in-alt"></i>
+                  </span>
+                  <span>Log in</span>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
     </nav>
 
-    <%# Main Content %>
-    <div class="container">
-      <%= yield %>
-    </div>
+    <!-- Flash Messages -->
+    <% flash.each do |name, msg| %>
+      <div class="notification <%= name == 'notice' ? 'is-success' : 'is-danger' %> is-light">
+        <button class="delete"></button>
+        <%= msg %>
+      </div>
+    <% end %>
+
+    <!-- Main Content -->
+    <main class="section">
+      <div class="container">
+        <%= yield %>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer has-background-light">
+      <div class="content has-text-centered">
+        <p>
+          <strong>Library Management System</strong> by <a href="#">Your Name</a>.
+        </p>
+      </div>
+    </footer>
   </body>
 </html>

@@ -1,16 +1,26 @@
- 
-<h2><%= @resource.title %></h2>
-<p>Author: <%= @resource.author %></p>
-<p>ISBN: <%= @resource.isbn %></p>
-<p>Published: <%= @resource.published_date %></p>
-<p>Availability: <%= @resource.available? ? "Available" : "Checked Out" %></p>
-
-<% if user_signed_in? %>
-  <% if @resource.available? %>
-    <%= button_to "Reserve Book", reserve_book_path(@resource), method: :post %>
-  <% else %>
-    <p>This book is currently unavailable.</p>
-  <% end %>
-<% else %>
-  <p><%= link_to "Log in to reserve this book", new_user_session_path %></p>
-<% end %>
+<div class="resource-details">
+  <h1><%= @resource.title %></h1>
+  
+  <div class="availability-status">
+    Status: <%= @resource.available? ? "Available" : "Not Available" %>
+  </div>
+  
+  <div class="resource-info">
+    <p>Published: <%= @resource.publish_year %></p>
+    <p>Language: <%= @resource.language %></p>
+    <p>Publisher: <%= @resource.publisher %></p>
+    
+    <% if @resource.is_a?(Book) %>
+      <p>Author: <%= @resource.author %></p>
+    <% else %>
+      <p>Volume: <%= @resource.volume %></p>
+      <p>Issue: <%= @resource.issue %></p>
+    <% end %>
+    
+    <% if @resource.description.present? %>
+      <p>Description: <%= @resource.description %></p>
+    <% end %>
+  </div>
+  
+  <%= link_to "Reserve", login_path, class: "reserve-button" if @resource.available? %>
+</div>

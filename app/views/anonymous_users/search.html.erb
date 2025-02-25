@@ -1,14 +1,27 @@
- <h2>Search Results</h2>
+<h2>Search Results</h2>
 
-<% if @resources.any? %>
+<h3>Books</h3>
+<% if @books.any? %>
   <ul>
-    <% @resources.each do |resource| %>
+    <% @books.each do |book| %>
       <li>
-        <%= link_to resource.title, resource_details_path(resource) %> (by <%= resource.author %>)
+        <%= link_to book.title, resource_details_path(book) %> (by <%= book.author %>)
       </li>
     <% end %>
   </ul>
 <% else %>
-  <p>No results found. Try a different search query.</p>
+  <p>No books found.</p>
 <% end %>
 
+<h3>Journals</h3>
+<% if @journals.any? %>
+  <ul>
+    <% @journals.each do |journal| %>
+      <li>
+        <%= link_to journal.title, resource_details_path(journal) %> (Volume: <%= journal.volume %>, Issue: <%= journal.issue_number %>)
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No journals found.</p>
+<% end %>

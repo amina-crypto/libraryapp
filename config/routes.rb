@@ -1,42 +1,90 @@
 Rails.application.routes.draw do
+  # Devise routes should come first
   devise_for :users
-  # get "home/index"
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  
+  # Root route
+  root 'anonymous_users#home'
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
+  # Anonymous Users Routes (rename the conflicting routes)
+  resources :anonymous_users, only: [:new, :create] do
+    collection do
+      get :search
+      get :home
+    end
+  end
+
+  # Library User routes
+  namespace :user do
+    get 'dashboard', to: 'dashboard#index'
+    resources :loans, only: [:index, :show]
+    resources :reservations, only: [:index, :create, :destroy]
+    resources :fines, only: [:index] do
+      collection do
+        get :history
+      end
+    end
+  end
+
+  # Library Personnel routes
+  namespace :personnel do
+    get 'dashboard', to: 'dashboard#index'
+    resources :library_resources do
+      collection do
+        get :overdue
+        get :low_stock
+      end
+    end
+    resources :users
+    resources :loans do
+      member do
+        patch :return
+        patch :process_fine
+      end
+      get :overdue, on: :collection
+    end
+    resources :reservations do
+      member do
+        patch :approve
+        patch :reject
+      end
+    end
+    resources :fines do
+      member do
+        patch :mark_as_paid
+      end
+      collection do
+        get :outstanding
+      end
+    end
+    get 'statistics', to: 'statistics#index'
+  end
+
+  # Shared resource routes
+  resources :books, only: [:index, :show]
+  resources :journals, only: [:index, :show]
+  get 'search', to: 'search#index'
+
+  # Health check route
   get "up" => "rails/health#show", as: :rails_health_check
-  root "home#index"
 
-  # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
+  # Resources
+  #resources :users
+  resources :users, except: [:new, :create, :edit, :update, :destroy]
 
-  # Defines the root path route ("/")
-  # root "posts#index"
-  #
-  resources :users
   resources :library_resources
-  resources :books
-  resources :journals
   resources :categories
   resources :categorizations
-  resources :reservations
-  resources :loans
-  resources :fines
 
   # API Endpoints
   namespace :api do
     resources :library_resources, defaults: { format: :json }
   end
 
-  # root "library_resources#index"
-  devise_for :users, controllers: { registrations: "users/registrations" }
-
-  # Anonymous Users
-  root to: "anonymous_users#home"
-  get "search_resources", to: "anonymous_users#search"
-  get "resource_details/:id", to: "anonymous_users#show", as: "resource_details"
+  # API Endpoints for anonymous access
+  namespace :api do
+    resources :library_resources, only: [ :index, :show ], defaults: { format: :json }
+    get "search", to: "library_resources#search"
+  end
 
   # Library Users
   authenticated :user, ->(u) { u.is_a?(LibraryUser) } do

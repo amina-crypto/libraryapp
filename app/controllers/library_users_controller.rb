@@ -1,6 +1,21 @@
 class LibraryUsersController < AnonymousUsersController
   before_action :authenticate_user!
   before_action :authorize_library_user
+  respond_to :json, :xml
+
+  def index
+    @resources = if params[:category].present?
+      LibraryResource.where(category_id: params[:category])
+    else
+      LibraryResource.all
+    end
+    respond_with @resources
+  end
+  def search
+    @resources = LibraryResource.where("title LIKE ?", "%#{params[:query]}%")
+    respond_with @resources
+  end
+end
 
   def dashboard
     @borrowed_books = current_user.loans
@@ -31,4 +46,3 @@ class LibraryUsersController < AnonymousUsersController
       redirect_to root_path, alert: "Access Denied: You are not a Library User"
     end
   end
-end
