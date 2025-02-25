@@ -1,52 +1,258 @@
-<section class="hero is-primary is-fullheight-with-navbar">
+<div class="hero is-fullheight-with-navbar">
+  <!-- Library Header -->
+  <div class="hero-head">
+    <nav class="navbar is-dark">
+      <div class="container">
+        <div class="navbar-brand">
+          <%= link_to root_path, class: "navbar-item" do %>
+            <span class="icon-text">
+              <span class="icon has-text-warning">
+                <i class="fas fa-book-reader fa-lg"></i>
+              </span>
+              <span class="has-text-weight-bold is-size-4 ml-2">LibrarySystem</span>
+            </span>
+          <% end %>
+        </div>
+
+        <div class="navbar-menu">
+          <div class="navbar-end">
+            <div class="navbar-item">
+              <div class="buttons">
+                <%= link_to new_user_registration_path, class: "button is-warning" do %>
+                  <span class="icon">
+                    <i class="fas fa-user-plus"></i>
+                  </span>
+                  <span>Sign up</span>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Login Form Section -->
   <div class="hero-body">
     <div class="container">
       <div class="columns is-centered">
-        <div class="column is-5-tablet is-4-desktop is-3-widescreen">
-          <div class="box">
-            <h1 class="title has-text-centered">Login</h1>
+        <div class="column is-5-tablet is-4-desktop">
+          <div class="box login-box">
+            <!-- Login Header -->
+            <div class="has-text-centered mb-6">
+              <span class="icon is-large has-text-warning">
+                <i class="fas fa-book-open fa-3x"></i>
+              </span>
+              <h1 class="title is-3 mt-4">Welcome Back</h1>
+              <p class="subtitle is-6 has-text-grey">
+                Please sign in to continue
+              </p>
+            </div>
 
             <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+              <!-- Flash Messages -->
+              <% if flash[:alert] %>
+                <div class="notification is-danger is-light">
+                  <button class="delete"></button>
+                  <%= flash[:alert] %>
+                </div>
+              <% end %>
+
+              <!-- Email Field -->
               <div class="field">
-                <%= f.label :email, class: "label" %>
+                <label class="label">Email</label>
                 <div class="control has-icons-left">
-                  <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "input" %>
+                  <%= f.email_field :email, 
+                      autofocus: true, 
+                      autocomplete: "email", 
+                      class: "input is-medium", 
+                      placeholder: "your.email@example.com" %>
                   <span class="icon is-small is-left">
                     <i class="fas fa-envelope"></i>
                   </span>
                 </div>
               </div>
 
+              <!-- Password Field -->
               <div class="field">
-                <%= f.label :password, class: "label" %>
+                <label class="label">Password</label>
                 <div class="control has-icons-left">
-                  <%= f.password_field :password, autocomplete: "current-password", class: "input" %>
+                  <%= f.password_field :password, 
+                      autocomplete: "current-password", 
+                      class: "input is-medium", 
+                      placeholder: "Your password" %>
                   <span class="icon is-small is-left">
                     <i class="fas fa-lock"></i>
                   </span>
                 </div>
               </div>
 
-              <% if devise_mapping.rememberable? %>
-                <div class="field">
-                  <div class="control">
-                    <%= f.check_box :remember_me, class: "checkbox" %>
-                    <%= f.label :remember_me %>
-                  </div>
-                </div>
-              <% end %>
-
+              <!-- Remember Me -->
               <div class="field">
-                <%= f.submit "Log in", class: "button is-primary is-fullwidth" %>
+                <div class="control">
+                  <label class="checkbox">
+                    <%= f.check_box :remember_me %>
+                    <span class="ml-2">Remember me</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Submit Button -->
+              <div class="field mt-5">
+                <%= f.submit "Sign in", class: "button is-warning is-fullwidth is-medium" %>
               </div>
             <% end %>
 
-            <div class="has-text-centered mt-4">
-              <%= render "devise/shared/links" %>
+            <!-- Links -->
+            <div class="has-text-centered mt-5">
+              <%= link_to "Forgot your password?", 
+                  new_password_path(resource_name), 
+                  class: "has-text-grey has-text-weight-medium is-size-6" %>
+            </div>
+
+            <!-- Divider -->
+            <div class="is-divider" data-content="OR"></div>
+
+            <!-- Social Login -->
+            <div class="buttons are-medium is-centered">
+              <button class="button is-light is-fullwidth">
+                <span class="icon">
+                  <i class="fab fa-google"></i>
+                </span>
+                <span>Continue with Google</span>
+              </button>
             </div>
           </div>
+
+          <!-- Sign Up Link -->
+          <p class="has-text-centered mt-4 has-text-white">
+            Don't have an account? 
+            <%= link_to "Create one", 
+                new_registration_path(resource_name), 
+                class: "has-text-warning has-text-weight-bold" %>
+          </p>
         </div>
       </div>
     </div>
   </div>
-</section>
+</div>
+
+<% content_for :styles do %>
+  <style>
+    .hero {
+      background: linear-gradient(135deg, #363636 0%, #242424 100%);
+    }
+
+    .login-box {
+      background: white;
+      border-radius: 8px;
+      padding: 2.5rem;
+      box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 
+                  0 0 0 1px rgba(10, 10, 10, 0.02);
+    }
+
+    .navbar {
+      background: transparent !important;
+      padding: 1rem 0;
+    }
+
+    .button.is-warning {
+      background-color: #FFB800;
+      border-color: transparent;
+      color: #fff;
+    }
+
+    .button.is-warning:hover {
+      background-color: #E6A600;
+    }
+
+    .input {
+      transition: border-color 0.3s ease;
+    }
+
+    .input:focus {
+      border-color: #FFB800;
+      box-shadow: 0 0 0 0.125em rgba(255, 184, 0, 0.25);
+    }
+
+    .checkbox {
+      cursor: pointer;
+    }
+
+    .is-divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 2rem 0;
+    }
+
+    .is-divider::before,
+    .is-divider::after {
+      content: "";
+      flex: 1;
+      border-bottom: 1px solid #dbdbdb;
+    }
+
+    .is-divider[data-content]::after,
+    .is-divider[data-content]::before {
+      margin: 0 1rem;
+    }
+
+    .is-divider[data-content] {
+      color: #7a7a7a;
+      font-size: 0.85rem;
+    }
+
+    .notification {
+      animation: slideIn 0.5s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .delete {
+      transition: background-color 0.3s ease;
+    }
+
+    .icon.is-large {
+      height: 3rem;
+      width: 3rem;
+    }
+
+    .has-text-warning {
+      color: #FFB800 !important;
+    }
+
+    .button.is-light {
+      background-color: #f5f5f5;
+      border-color: transparent;
+      color: #363636;
+    }
+
+    .button.is-light:hover {
+      background-color: #e8e8e8;
+    }
+  </style>
+<% end %>
+
+<% content_for :scripts do %>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Close notification
+      (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+        const $notification = $delete.parentNode;
+        $delete.addEventListener('click', () => {
+          $notification.parentNode.removeChild($notification);
+        });
+      });
+    });
+  </script>
+<% end %>
