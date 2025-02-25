@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Library System</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <!-- Only include Bulma and Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <style>
+      /* Add any custom styles here */
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(255, 184, 0, 0.2);
+        transition: all 0.3s ease;
+      }
+      
+      .hero-background {
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)),
+                    url('https://images.unsplash.com/photo-1507842217343-583bb7270b66');
+        background-size: cover;
+        background-position: center;
+      }
+
+      .footer {
+        padding: 3rem 1.5rem;
+        margin-top: 3rem;
+      }
+    </style>
+  </head>
+
+  <body class="has-background-dark">
+    <%= render 'shared/anonymous_header' %>
+    
+    <% if notice %>
+      <div class="notification is-info is-light">
+        <button class="delete"></button>
+        <%= notice %>
+      </div>
+    <% end %>
+    
+    <% if alert %>
+      <div class="notification is-warning is-light">
+        <button class="delete"></button>
+        <%= alert %>
+      </div>
+    <% end %>
+
+    <main>
+      <%= yield %>
+    </main>
+
+    <%= render 'shared/footer' %>
+  </body>
+</html> 

@@ -117,12 +117,24 @@ $dark: #363636;
 }
 
 .card {
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   height: 100%;
   
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(10,10,10,0.1);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+}
+
+.card-image {
+  overflow: hidden;
+  
+  img {
+    transition: transform 0.3s ease;
+    
+    &:hover {
+      transform: scale(1.05);
+    }
   }
 }
 
@@ -164,5 +176,44 @@ $dark: #363636;
     tr:not(.is-selected):nth-child(even) {
       background-color: #fafafa;
     }
+  }
+}
+
+// Hero section styles
+.hero.is-dark {
+  background: linear-gradient(135deg, #363636 0%, #242424 100%);
+}
+
+.hero-body {
+  padding: 5rem 1.5rem;
+}
+
+// Button styles
+.button.is-warning {
+  background-color: #FFB800;
+  color: #fff;
+  
+  &:hover {
+    background-color: #E6A600;
+  }
+}
+
+// Tag styles
+.tag.is-warning {
+  background-color: #FFB800;
+  color: #fff;
+}
+
+// Section spacing
+.section {
+  padding: 4rem 1.5rem;
+}
+
+// Card footer styles
+.card-footer-item {
+  transition: background-color 0.3s ease;
+  
+  &:hover {
+    background-color: #f5f5f5;
   }
 } 

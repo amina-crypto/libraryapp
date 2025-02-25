@@ -1,0 +1,74 @@
+<div class="hero is-primary is-medium">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title is-1">
+        Welcome to Our Library
+      </h1>
+      <p class="subtitle is-3">
+        Discover our collection of books and journals
+      </p>
+      
+      <!-- Search Bar -->
+      <div class="box mt-6">
+        <%= form_with url: search_resources_path, method: :get, local: true do |f| %>
+          <div class="field has-addons">
+            <div class="control is-expanded">
+              <%= f.text_field :query, 
+                  class: "input is-large", 
+                  placeholder: "Search for books, journals, authors..." %>
+            </div>
+            <div class="control">
+              <%= f.submit "Search", class: "button is-info is-large" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <!-- Featured Categories -->
+    <h2 class="title is-3 mb-5">Browse by Category</h2>
+    <div class="columns is-multiline">
+      <% Category.all.each do |category| %>
+        <div class="column is-3">
+          <%= link_to search_resources_path(category_id: category.id), class: "box has-text-centered" do %>
+            <span class="icon is-large">
+              <i class="fas fa-book fa-2x"></i>
+            </span>
+            <p class="title is-5 mt-3"><%= category.name %></p>
+            <p class="subtitle is-6"><%= category.resources.count %> items</p>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Latest Resources -->
+    <h2 class="title is-3 mt-6 mb-5">Latest Additions</h2>
+    <div class="columns is-multiline">
+      <% Resource.latest.limit(6).each do |resource| %>
+        <div class="column is-4">
+          <%= render 'resources/card', resource: resource %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action -->
+<section class="section has-background-light">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8 has-text-centered">
+        <h3 class="title is-4">Want to borrow resources?</h3>
+        <p class="subtitle">Create an account or sign in to start borrowing</p>
+        <div class="buttons is-centered">
+          <%= link_to "Sign Up", new_user_registration_path, class: "button is-primary is-medium" %>
+          <%= link_to "Login", new_user_session_path, class: "button is-light is-medium" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section> 

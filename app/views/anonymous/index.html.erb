@@ -1,0 +1,187 @@
+<div class="hero is-dark is-medium">
+  <div class="hero-body" style="background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80'); background-size: cover; background-position: center;">
+    <div class="container">
+      <h1 class="title has-text-warning is-1 has-text-centered" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
+        Welcome to Our Library
+      </h1>
+      <p class="subtitle has-text-white-ter is-3 has-text-centered" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
+        Explore our collection of books and journals
+      </p>
+
+      <!-- Enhanced Search Box -->
+      <div class="box has-background-dark mt-6" style="border: 2px solid #FFB800;">
+        <%= form_with url: library_search_path, method: :get, local: true do |f| %>
+          <div class="field has-addons">
+            <div class="control is-expanded has-icons-left">
+              <%= f.text_field :query, 
+                  class: "input is-medium", 
+                  style: "background: rgba(255,255,255,0.9);",
+                  placeholder: "Search for books, journals, authors..." %>
+              <span class="icon is-left">
+                <i class="fas fa-search"></i>
+              </span>
+            </div>
+            <div class="control">
+              <%= f.submit "Search", class: "button is-warning is-medium", 
+                  style: "background-color: #FFB800; font-weight: bold;" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="section has-background-dark">
+  <div class="container">
+    <!-- Featured Books -->
+    <div class="content mt-6">
+      <h2 class="title is-2 has-text-warning has-text-centered mb-6" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.3);">
+        <span class="icon-text">
+          <span class="icon">
+            <i class="fas fa-book"></i>
+          </span>
+          <span>Featured Books</span>
+        </span>
+      </h2>
+      
+      <div class="columns is-multiline">
+        <% @featured_books.each do |book| %>
+          <div class="column is-one-fifth">
+            <div class="card has-background-black-ter" style="height: 100%; transition: transform 0.3s ease;">
+              <div class="card-image">
+                <figure class="image is-4by3">
+                  <% if book.cover_image.attached? %>
+                    <%= image_tag book.cover_image %>
+                  <% else %>
+                    <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Book cover">
+                  <% end %>
+                </figure>
+              </div>
+              <div class="card-content">
+                <p class="title is-5 has-text-warning"><%= book.title %></p>
+                <p class="subtitle is-6 has-text-white-ter">by <%= book.author %></p>
+                
+                <div class="tags">
+                  <span class="tag is-warning"><%= book.publish_year %></span>
+                  <span class="tag is-info"><%= book.language %></span>
+                </div>
+              </div>
+              <footer class="card-footer" style="border-top: 1px solid #FFB800;">
+                <%= link_to library_resource_path(book), class: "card-footer-item has-text-warning" do %>
+                  <span class="icon-text">
+                    <span class="icon">
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                    <span>Details</span>
+                  </span>
+                <% end %>
+              </footer>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Featured Journals -->
+    <div class="content mt-6">
+      <h2 class="title is-2 has-text-warning has-text-centered mb-6" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.3);">
+        <span class="icon-text">
+          <span class="icon">
+            <i class="fas fa-journal-whills"></i>
+          </span>
+          <span>Featured Journals</span>
+        </span>
+      </h2>
+      
+      <div class="columns is-multiline">
+        <% @featured_journals.each do |journal| %>
+          <div class="column is-one-fifth">
+            <div class="card has-background-black-ter" style="height: 100%; transition: transform 0.3s ease;">
+              <!-- Similar structure as book cards but with journal-specific info -->
+              <div class="card-image">
+                <figure class="image is-4by3">
+                  <% if journal.cover_image.attached? %>
+                    <%= image_tag journal.cover_image %>
+                  <% else %>
+                    <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Journal cover">
+                  <% end %>
+                </figure>
+              </div>
+              <div class="card-content">
+                <p class="title is-5 has-text-warning"><%= journal.title %></p>
+                <p class="subtitle is-6 has-text-white-ter">
+                  Vol. <%= journal.volume %>, Issue <%= journal.issue %>
+                </p>
+                
+                <div class="tags">
+                  <span class="tag is-warning"><%= journal.publish_year %></span>
+                  <span class="tag is-info"><%= journal.language %></span>
+                </div>
+              </div>
+              <footer class="card-footer" style="border-top: 1px solid #FFB800;">
+                <%= link_to library_resource_path(journal), class: "card-footer-item has-text-warning" do %>
+                  <span class="icon-text">
+                    <span class="icon">
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                    <span>Details</span>
+                  </span>
+                <% end %>
+              </footer>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Categories Section -->
+<section class="section has-background-black">
+  <div class="container">
+    <h2 class="title is-2 has-text-warning has-text-centered mb-6" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.3);">
+      Browse by Category
+    </h2>
+    
+    <div class="columns is-multiline">
+      <% @categories.each do |category| %>
+        <div class="column is-3">
+          <%= link_to library_search_path(category_id: category.id), 
+              class: "box has-background-dark has-text-centered",
+              style: "transition: transform 0.3s ease; border: 1px solid #FFB800;" do %>
+            <span class="icon is-large">
+              <i class="fas fa-folder fa-2x has-text-warning"></i>
+            </span>
+            <p class="title is-5 mt-3 has-text-warning"><%= category.name %></p>
+            <p class="subtitle is-6 has-text-white-ter"><%= category.resources.count %> items</p>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<style>
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(255, 184, 0, 0.2);
+  }
+  
+  .box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(255, 184, 0, 0.2);
+  }
+  
+  .card-footer-item:hover {
+    background-color: rgba(255, 184, 0, 0.1);
+  }
+  
+  .hero {
+    border-bottom: 3px solid #FFB800;
+  }
+  
+  .section {
+    border-bottom: 1px solid #FFB800;
+  }
+</style> 

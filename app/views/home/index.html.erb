@@ -1,2 +1,160 @@
-<h1>Home#index</h1>
-<p>Find me in app/views/home/index.html.erb</p>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Library System - Welcome</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  
+  <style>
+    .hero-background {
+      background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)),
+                  url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    .enter-button {
+      position: relative;
+      padding: 1.5rem 3rem;
+      font-size: 1.5rem;
+      color: #FFB800;
+      letter-spacing: 1.1rem;
+      text-transform: uppercase;
+      transition: all 500ms cubic-bezier(0.77, 0, 0.175, 1);
+      cursor: pointer;
+      user-select: none;
+      border: 2px solid #FFB800;
+      background: transparent;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .enter-button:before, .enter-button:after {
+      content: '';
+      position: absolute;
+      transition: inherit;
+      z-index: -1;
+    }
+
+    .enter-button:hover {
+      color: #242424;
+      transition-delay: .5s;
+    }
+
+    .enter-button:hover:before {
+      transition-delay: 0s;
+    }
+
+    .enter-button:hover:after {
+      background: #FFB800;
+      transition-delay: .35s;
+    }
+
+    .enter-button:before {
+      top: 0;
+      left: 50%;
+      height: 100%;
+      width: 0;
+      border: 1px solid #FFB800;
+      background: #FFB800;
+    }
+
+    .enter-button:after {
+      bottom: 0;
+      left: 0;
+      height: 0;
+      width: 100%;
+      background: #FFB800;
+    }
+
+    .enter-button:hover:before {
+      left: 0;
+      width: 100%;
+    }
+
+    .enter-button:hover:after {
+      top: 0;
+      height: 100%;
+    }
+
+    .title-animation {
+      animation: fadeInDown 1.5s ease-out;
+    }
+
+    .subtitle-animation {
+      animation: fadeInUp 1.5s ease-out;
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-text {
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+  </style>
+</head>
+
+<body>
+  <section class="hero is-fullheight hero-background">
+    <div class="hero-body">
+      <div class="container has-text-centered">
+        <div class="mb-6 title-animation">
+          <h1 class="title is-1 has-text-white hero-text" style="font-size: 4rem;">
+            Library System
+          </h1>
+          <p class="subtitle is-3 has-text-white-ter hero-text mt-4">
+            Discover. Learn. Grow.
+          </p>
+        </div>
+        
+        <div class="subtitle-animation" style="margin-top: 4rem;">
+          <%= link_to "Enter", library_path, class: "enter-button" %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Credits -->
+    <div class="hero-foot">
+      <div class="container has-text-centered py-4">
+        <p class="has-text-white-ter is-size-7">
+          Photo by 
+          <a href="https://unsplash.com/@kimberlyfarmer" 
+             target="_blank" 
+             class="has-text-warning">
+            Kimberly Farmer
+          </a> 
+          on 
+          <a href="https://unsplash.com" 
+             target="_blank" 
+             class="has-text-warning">
+            Unsplash
+          </a>
+        </p>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

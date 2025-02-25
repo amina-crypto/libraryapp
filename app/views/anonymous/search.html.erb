@@ -1,0 +1,121 @@
+<div class="hero is-dark is-small">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title has-text-warning">
+        Search Our Library
+      </h1>
+      <p class="subtitle has-text-white-ter">
+        Find books and journals in our collection
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="section has-background-white-ter">
+  <div class="container">
+    <!-- Enhanced Search Form -->
+    <div class="box has-background-dark">
+      <%= form_with url: search_path, method: :get, local: true, 
+          data: { controller: "search", turbo_frame: "search-results" } do |f| %>
+        <div class="field">
+          <div class="control has-icons-left">
+            <%= f.text_field :query, 
+                class: "input is-medium", 
+                placeholder: "Search books, journals, authors...",
+                value: @query %>
+            <span class="icon is-left">
+              <i class="fas fa-search"></i>
+            </span>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="columns mt-4">
+          <div class="column is-4">
+            <div class="field">
+              <label class="label has-text-warning">Category</label>
+              <div class="control">
+                <div class="select is-fullwidth is-warning">
+                  <%= f.select :category_id, 
+                      @categories.map { |c| [c.name, c.id] }.unshift(['All Categories', '']),
+                      selected: params[:category_id] %>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="column is-4">
+            <div class="field">
+              <label class="label has-text-warning">Language</label>
+              <div class="control">
+                <div class="select is-fullwidth is-warning">
+                  <%= f.select :language, 
+                      ['All Languages', 'English', 'French', 'German', 'Spanish'],
+                      selected: params[:language] %>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="column is-4">
+            <div class="field">
+              <label class="label has-text-white">&nbsp;</label>
+              <%= f.submit "Search", class: "button is-warning is-fullwidth" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Results Section -->
+    <%= turbo_frame_tag "search-results" do %>
+      <% if @query.present? %>
+        <!-- Books Section -->
+        <div class="box mt-6">
+          <h2 class="title is-3 has-text-dark">
+            <span class="icon-text">
+              <span class="icon has-text-warning">
+                <i class="fas fa-book"></i>
+              </span>
+              <span>Books</span>
+              <span class="tag is-warning is-medium ml-2"><%= @books.count %> found</span>
+            </span>
+          </h2>
+          
+          <% if @books.any? %>
+            <div class="columns is-multiline">
+              <%= render partial: 'shared/book_card', collection: @books, as: :book %>
+            </div>
+          <% else %>
+            <p class="subtitle has-text-grey">No books found matching your search criteria.</p>
+          <% end %>
+        </div>
+
+        <!-- Journals Section -->
+        <div class="box mt-6">
+          <h2 class="title is-3 has-text-dark">
+            <span class="icon-text">
+              <span class="icon has-text-warning">
+                <i class="fas fa-journal-whills"></i>
+              </span>
+              <span>Journals</span>
+              <span class="tag is-warning is-medium ml-2"><%= @journals.count %> found</span>
+            </span>
+          </h2>
+          
+          <% if @journals.any? %>
+            <div class="columns is-multiline">
+              <%= render partial: 'shared/journal_card', collection: @journals, as: :journal %>
+            </div>
+          <% else %>
+            <p class="subtitle has-text-grey">No journals found matching your search criteria.</p>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="has-text-centered my-6">
+          <p class="subtitle is-4">Enter a search term to find resources.</p>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div> 

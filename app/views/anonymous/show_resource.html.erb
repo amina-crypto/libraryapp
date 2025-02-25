@@ -1,0 +1,113 @@
+<div class="hero is-dark is-small">
+  <div class="hero-body">
+    <div class="container">
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb has-text-white" aria-label="breadcrumbs">
+        <ul>
+          <li><%= link_to "Home", root_path, class: "has-text-warning" %></li>
+          <li><%= link_to "Search", search_path, class: "has-text-warning" %></li>
+          <li class="is-active"><a href="#" aria-current="page" class="has-text-white-ter"><%= @resource.title %></a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<div class="section has-background-white-ter">
+  <div class="container">
+    <div class="columns">
+      <!-- Resource Image -->
+      <div class="column is-4">
+        <div class="card has-background-dark">
+          <div class="card-image">
+            <figure class="image is-4by3">
+              <% if @resource.cover_image.attached? %>
+                <%= image_tag @resource.cover_image %>
+              <% else %>
+                <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Resource cover">
+              <% end %>
+            </figure>
+          </div>
+
+          <!-- Availability Status -->
+          <div class="card-content">
+            <div class="level">
+              <div class="level-left">
+                <div class="level-item">
+                  <span class="icon-text has-text-white">
+                    <span class="icon <%= @resource.available? ? 'has-text-success' : 'has-text-danger' %>">
+                      <i class="fas <%= @resource.available? ? 'fa-check-circle' : 'fa-times-circle' %>"></i>
+                    </span>
+                    <span><%= @resource.available? ? 'Available' : 'Not Available' %></span>
+                  </span>
+                </div>
+              </div>
+              <div class="level-right">
+                <% if @resource.available? %>
+                  <%= link_to new_user_session_path, class: "button is-warning" do %>
+                    <span class="icon">
+                      <i class="fas fa-bookmark"></i>
+                    </span>
+                    <span>Login to Reserve</span>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resource Details -->
+      <div class="column is-8">
+        <div class="box has-background-dark">
+          <div class="content has-text-white">
+            <h1 class="title is-2 has-text-warning"><%= @resource.title %></h1>
+            
+            <div class="tags are-medium mb-5">
+              <span class="tag is-warning"><%= @resource.type %></span>
+              <span class="tag is-info"><%= @resource.language %></span>
+              <span class="tag is-success"><%= @resource.category.name %></span>
+              <span class="tag is-light"><%= @resource.publish_year %></span>
+            </div>
+
+            <% if @resource.is_a?(Book) %>
+              <p class="subtitle is-4 has-text-warning">by <%= @resource.author %></p>
+            <% else %>
+              <p class="subtitle is-4 has-text-warning">
+                Volume <%= @resource.volume %>, Issue <%= @resource.issue %>
+              </p>
+            <% end %>
+
+            <% if @resource.publisher.present? %>
+              <div class="block">
+                <strong class="has-text-warning">Publisher:</strong> 
+                <span class="has-text-white-ter"><%= @resource.publisher %></span>
+              </div>
+            <% end %>
+
+            <% if @resource.description.present? %>
+              <div class="box has-background-black-ter mt-6">
+                <h3 class="title is-5 has-text-warning">Description</h3>
+                <div class="has-text-white-ter">
+                  <%= simple_format @resource.description %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="box has-background-warning mt-5">
+          <div class="has-text-centered">
+            <p class="title is-4 has-text-dark">Want to borrow this resource?</p>
+            <p class="subtitle is-6 has-text-dark mb-4">Create an account or sign in to start borrowing</p>
+            <div class="buttons is-centered">
+              <%= link_to "Sign Up", new_user_registration_path, class: "button is-dark" %>
+              <%= link_to "Login", new_user_session_path, class: "button is-dark is-outlined" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

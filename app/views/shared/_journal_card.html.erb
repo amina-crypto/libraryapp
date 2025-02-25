@@ -1,0 +1,60 @@
+<div class="column is-one-fifth">
+  <div class="card h-100">
+    <div class="card-image">
+      <figure class="image is-4by3">
+        <% if journal.cover_image.attached? %>
+          <%= image_tag journal.cover_image %>
+        <% else %>
+          <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Journal cover">
+        <% end %>
+      </figure>
+    </div>
+    
+    <div class="card-content">
+      <p class="title is-5"><%= journal.title %></p>
+      <p class="subtitle is-6">
+        Vol. <%= journal.volume %>, Issue <%= journal.issue %>
+      </p>
+      
+      <div class="tags">
+        <span class="tag is-warning"><%= journal.publish_year %></span>
+        <span class="tag is-info"><%= journal.language %></span>
+      </div>
+      
+      <div class="content">
+        <p class="has-text-grey"><%= truncate(journal.description, length: 100) %></p>
+      </div>
+    </div>
+    
+    <footer class="card-footer">
+      <%= link_to resource_path(journal), class: "card-footer-item" do %>
+        <span class="icon-text">
+          <span class="icon">
+            <i class="fas fa-info-circle"></i>
+          </span>
+          <span>Details</span>
+        </span>
+      <% end %>
+      
+      <% if journal.available? %>
+        <%= link_to new_user_session_path, class: "card-footer-item has-text-success" do %>
+          <span class="icon-text">
+            <span class="icon">
+              <i class="fas fa-bookmark"></i>
+            </span>
+            <span>Reserve</span>
+          </span>
+        <% end %>
+      <% else %>
+        <span class="card-footer-item has-text-danger">
+          <span class="icon-text">
+            <span class="icon">
+              <i class="fas fa-times-circle"></i>
+            </span>
+            <span>Not Available</span>
+          </span>
+        </span>
+      <% end %>
+    </footer>
+  </div>
+</div> 
