@@ -1,0 +1,134 @@
+<div class="section">
+  <div class="container">
+    <h1 class="title">
+      <span class="icon-text">
+        <span class="icon has-text-info">
+          <i class="fas fa-search"></i>
+        </span>
+        <span>Search Results</span>
+      </span>
+    </h1>
+
+    <!-- Search Form -->
+    <div class="box">
+      <%= form_tag search_path, method: :get, class: "form" do %>
+        <div class="columns">
+          <div class="column is-6">
+            <div class="field has-addons">
+              <div class="control is-expanded">
+                <%= text_field_tag :query, params[:query], class: "input is-medium", placeholder: "Search for books, journals..." %>
+              </div>
+              <div class="control">
+                <button class="button is-info is-medium">
+                  <span class="icon">
+                    <i class="fas fa-search"></i>
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="column is-3">
+            <div class="field">
+              <div class="control">
+                <div class="select is-medium is-fullwidth">
+                  <%= select_tag :type, 
+                      options_for_select([
+                        ['All Types', ''],
+                        ['Books', 'Book'],
+                        ['Journals', 'Journal']
+                      ], params[:type]) %>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="column is-3">
+            <div class="field">
+              <div class="control">
+                <div class="select is-medium is-fullwidth">
+                  <%= select_tag :category,
+                      options_from_collection_for_select(Category.all, 'id', 'name', params[:category]),
+                      prompt: 'All Categories' %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Advanced Filters -->
+        <div class="columns">
+          <div class="column is-3">
+            <div class="field">
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <%= select_tag :language,
+                      options_for_select(Resource::LANGUAGES, params[:language]),
+                      prompt: 'All Languages' %>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="column is-3">
+            <div class="field">
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <%= select_tag :availability,
+                      options_for_select([
+                        ['All', ''],
+                        ['Available', 'available'],
+                        ['Not Available', 'not_available']
+                      ], params[:availability]) %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Results Stats -->
+    <div class="level">
+      <div class="level-left">
+        <div class="level-item">
+          <p class="subtitle">
+            Found <strong><%= @resources.total_count %></strong> results
+          </p>
+        </div>
+      </div>
+      <div class="level-right">
+        <div class="level-item">
+          <div class="buttons has-addons">
+            <%= link_to search_path(request.params.merge(view: 'grid')), 
+                class: "button #{params[:view] != 'list' ? 'is-info' : ''}" do %>
+              <span class="icon"><i class="fas fa-th-large"></i></span>
+            <% end %>
+            <%= link_to search_path(request.params.merge(view: 'list')), 
+                class: "button #{params[:view] == 'list' ? 'is-info' : ''}" do %>
+              <span class="icon"><i class="fas fa-list"></i></span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Grid/List -->
+    <% if params[:view] == 'list' %>
+      <%= render 'search/results_list', resources: @resources %>
+    <% else %>
+      <div class="columns is-multiline">
+        <% @resources.each do |resource| %>
+          <div class="column is-4">
+            <%= render 'resources/card', resource: resource %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <!-- Pagination -->
+    <div class="mt-6">
+      <%= paginate @resources %>
+    </div>
+  </div>
+</div> 

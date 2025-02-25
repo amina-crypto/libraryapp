@@ -1,0 +1,125 @@
+<div class="section">
+  <div class="container">
+    <div class="columns">
+      <!-- Sidebar -->
+      <div class="column is-3">
+        <div class="box">
+          <aside class="menu">
+            <p class="menu-label">
+              My Library
+            </p>
+            <ul class="menu-list">
+              <li>
+                <%= link_to user_profile_path, class: "#{current_page?(user_profile_path) ? 'is-active' : ''}" do %>
+                  <span class="icon-text">
+                    <span class="icon"><i class="fas fa-user"></i></span>
+                    <span>My Profile</span>
+                  </span>
+                <% end %>
+              </li>
+              <li>
+                <%= link_to user_loans_path, class: "#{current_page?(user_loans_path) ? 'is-active' : ''}" do %>
+                  <span class="icon-text">
+                    <span class="icon"><i class="fas fa-book-reader"></i></span>
+                    <span>My Loans</span>
+                  </span>
+                <% end %>
+              </li>
+              <li>
+                <%= link_to user_reservations_path, class: "#{current_page?(user_reservations_path) ? 'is-active' : ''}" do %>
+                  <span class="icon-text">
+                    <span class="icon"><i class="fas fa-bookmark"></i></span>
+                    <span>My Reservations</span>
+                  </span>
+                <% end %>
+              </li>
+              <li>
+                <%= link_to user_fines_path, class: "#{current_page?(user_fines_path) ? 'is-active' : ''}" do %>
+                  <span class="icon-text">
+                    <span class="icon"><i class="fas fa-money-bill"></i></span>
+                    <span>My Fines</span>
+                  </span>
+                <% end %>
+              </li>
+            </ul>
+          </aside>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="column is-9">
+        <!-- Status Cards -->
+        <div class="columns is-multiline">
+          <div class="column is-6">
+            <div class="card">
+              <div class="card-content">
+                <div class="level">
+                  <div class="level-left">
+                    <div>
+                      <p class="heading">Active Loans</p>
+                      <p class="title"><%= @active_loans_count %></p>
+                    </div>
+                  </div>
+                  <div class="level-right">
+                    <span class="icon is-large has-text-primary">
+                      <i class="fas fa-book fa-2x"></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="column is-6">
+            <div class="card">
+              <div class="card-content">
+                <div class="level">
+                  <div class="level-left">
+                    <div>
+                      <p class="heading">Current Fines</p>
+                      <p class="title">₹<%= @outstanding_fines %></p>
+                    </div>
+                  </div>
+                  <div class="level-right">
+                    <span class="icon is-large has-text-danger">
+                      <i class="fas fa-money-bill fa-2x"></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="box mt-5">
+          <h3 class="title is-4">Recent Activity</h3>
+          <table class="table is-fullwidth">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Resource</th>
+                <th>Type</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @recent_activities.each do |activity| %>
+                <tr>
+                  <td><%= activity.created_at.strftime("%B %d, %Y") %></td>
+                  <td><%= activity.resource.title %></td>
+                  <td><%= activity.activity_type %></td>
+                  <td>
+                    <span class="tag <%= activity_status_class(activity) %>">
+                      <%= activity.status %>
+                    </span>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

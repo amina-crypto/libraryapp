@@ -1,0 +1,149 @@
+<div class="section">
+  <div class="container">
+    <div class="level">
+      <div class="level-left">
+        <div class="level-item">
+          <h1 class="title">
+            <span class="icon-text">
+              <span class="icon has-text-info">
+                <i class="fas fa-users"></i>
+              </span>
+              <span>Manage Users</span>
+            </span>
+          </h1>
+        </div>
+      </div>
+      <div class="level-right">
+        <div class="level-item">
+          <%= link_to new_personnel_user_path, class: "button is-primary" do %>
+            <span class="icon">
+              <i class="fas fa-user-plus"></i>
+            </span>
+            <span>Add New User</span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="box">
+      <%= form_tag personnel_users_path, method: :get, class: "form" do %>
+        <div class="columns">
+          <div class="column is-4">
+            <div class="field">
+              <div class="control has-icons-left">
+                <%= text_field_tag :query, params[:query], class: "input", placeholder: "Search users..." %>
+                <span class="icon is-small is-left">
+                  <i class="fas fa-search"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="column is-2">
+            <div class="field">
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <%= select_tag :role,
+                      options_for_select([
+                        ['All Roles', ''],
+                        ['Library Users', 'library_user'],
+                        ['Library Personnel', 'library_personnel']
+                      ], params[:role]) %>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="column is-2">
+            <div class="field">
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <%= select_tag :status,
+                      options_for_select([
+                        ['All Status', ''],
+                        ['Active', 'active'],
+                        ['Inactive', 'inactive']
+                      ], params[:status]) %>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="column is-2">
+            <%= submit_tag "Filter", class: "button is-info is-fullwidth" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Users Table -->
+    <div class="box">
+      <table class="table is-fullwidth is-striped">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Joined</th>
+            <th>Active Loans</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @users.each do |user| %>
+            <tr>
+              <td>
+                <%= link_to personnel_user_path(user), class: "has-text-weight-medium" do %>
+                  <%= user.full_name %>
+                <% end %>
+              </td>
+              <td><%= user.email %></td>
+              <td>
+                <span class="tag <%= user.library_personnel? ? 'is-info' : 'is-primary' %>">
+                  <%= user.role.humanize %>
+                </span>
+              </td>
+              <td>
+                <span class="tag <%= user.active? ? 'is-success' : 'is-danger' %>">
+                  <%= user.active? ? 'Active' : 'Inactive' %>
+                </span>
+              </td>
+              <td><%= user.created_at.strftime("%B %d, %Y") %></td>
+              <td>
+                <% if user.active_loans_count > 0 %>
+                  <span class="tag is-warning">
+                    <%= user.active_loans_count %>
+                  </span>
+                <% else %>
+                  -
+                <% end %>
+              </td>
+              <td>
+                <div class="buttons are-small">
+                  <%= link_to edit_personnel_user_path(user), class: "button is-info" do %>
+                    <span class="icon">
+                      <i class="fas fa-edit"></i>
+                    </span>
+                  <% end %>
+
+                  <%= button_to toggle_status_personnel_user_path(user),
+                      method: :patch,
+                      class: "button #{user.active? ? 'is-danger' : 'is-success'}",
+                      data: { confirm: "Are you sure?" } do %>
+                    <span class="icon">
+                      <i class="fas <%= user.active? ? 'fa-ban' : 'fa-check' %>"></i>
+                    </span>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <%= paginate @users %>
+    </div>
+  </div>
+</div> 

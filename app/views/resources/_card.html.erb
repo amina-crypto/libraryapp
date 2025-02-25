@@ -1,0 +1,58 @@
+<div class="card h-100">
+  <div class="card-image">
+    <figure class="image is-4by3">
+      <% if resource.cover_image.attached? %>
+        <%= image_tag resource.cover_image %>
+      <% else %>
+        <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Resource cover">
+      <% end %>
+    </figure>
+  </div>
+  
+  <div class="card-content">
+    <div class="content">
+      <h4 class="title is-4"><%= resource.title %></h4>
+      
+      <% if resource.is_a?(Book) %>
+        <p class="subtitle is-6">by <%= resource.author %></p>
+      <% elsif resource.is_a?(Journal) %>
+        <p class="subtitle is-6">Vol. <%= resource.volume %>, Issue <%= resource.issue %></p>
+      <% end %>
+
+      <div class="tags">
+        <span class="tag is-primary"><%= resource.type %></span>
+        <span class="tag is-info"><%= resource.language %></span>
+        <span class="tag is-warning"><%= resource.publish_year %></span>
+        <% if resource.available? %>
+          <span class="tag is-success">Available</span>
+        <% else %>
+          <span class="tag is-danger">Not Available</span>
+        <% end %>
+      </div>
+
+      <p class="mt-3"><%= truncate(resource.description, length: 100) if resource.description %></p>
+    </div>
+  </div>
+
+  <footer class="card-footer">
+    <%= link_to resource_path(resource), class: "card-footer-item" do %>
+      <span class="icon-text">
+        <span class="icon">
+          <i class="fas fa-info-circle"></i>
+        </span>
+        <span>Details</span>
+      </span>
+    <% end %>
+
+    <% if resource.available? && user_signed_in? %>
+      <%= link_to new_reservation_path(resource_id: resource.id), class: "card-footer-item" do %>
+        <span class="icon-text">
+          <span class="icon">
+            <i class="fas fa-bookmark"></i>
+          </span>
+          <span>Reserve</span>
+        </span>
+      <% end %>
+    <% end %>
+  </footer>
+</div> 

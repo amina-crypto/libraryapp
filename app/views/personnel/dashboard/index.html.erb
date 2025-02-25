@@ -1,0 +1,135 @@
+<div class="section">
+  <div class="container">
+    <div class="columns">
+      <!-- Sidebar -->
+      <div class="column is-3">
+        <div class="box">
+          <aside class="menu">
+            <p class="menu-label">
+              Library Management
+            </p>
+            <ul class="menu-list">
+              <li>
+                <%= link_to personnel_library_resources_path do %>
+                  <span class="icon-text">
+                    <span class="icon"><i class="fas fa-books"></i></span>
+                    <span>Resources</span>
+                  </span>
+                <% end %>
+              </li>
+              <li>
+                <%= link_to personnel_users_path do %>
+                  <span class="icon-text">
+                    <span class="icon"><i class="fas fa-users"></i></span>
+                    <span>Users</span>
+                  </span>
+                <% end %>
+              </li>
+              <li>
+                <%= link_to personnel_loans_path do %>
+                  <span class="icon-text">
+                    <span class="icon"><i class="fas fa-hand-holding-book"></i></span>
+                    <span>Loans</span>
+                  </span>
+                <% end %>
+              </li>
+              <li>
+                <%= link_to personnel_reservations_path do %>
+                  <span class="icon-text">
+                    <span class="icon"><i class="fas fa-bookmark"></i></span>
+                    <span>Reservations</span>
+                  </span>
+                <% end %>
+              </li>
+              <li>
+                <%= link_to personnel_fines_path do %>
+                  <span class="icon-text">
+                    <span class="icon"><i class="fas fa-money-bill"></i></span>
+                    <span>Fines</span>
+                  </span>
+                <% end %>
+              </li>
+            </ul>
+          </aside>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="column is-9">
+        <!-- Quick Stats -->
+        <div class="columns is-multiline">
+          <div class="column is-3">
+            <div class="card has-background-primary has-text-white">
+              <div class="card-content">
+                <p class="title is-4 has-text-white">
+                  <%= @total_loans %>
+                </p>
+                <p class="subtitle is-6 has-text-white">
+                  Active Loans
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="column is-3">
+            <div class="card has-background-danger has-text-white">
+              <div class="card-content">
+                <p class="title is-4 has-text-white">
+                  <%= @overdue_loans %>
+                </p>
+                <p class="subtitle is-6 has-text-white">
+                  Overdue Loans
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="column is-3">
+            <div class="card has-background-info has-text-white">
+              <div class="card-content">
+                <p class="title is-4 has-text-white">
+                  <%= @pending_reservations %>
+                </p>
+                <p class="subtitle is-6 has-text-white">
+                  Pending Reservations
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="column is-3">
+            <div class="card has-background-success has-text-white">
+              <div class="card-content">
+                <p class="title is-4 has-text-white">
+                  ₹<%= @total_fines %>
+                </p>
+                <p class="subtitle is-6 has-text-white">
+                  Outstanding Fines
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tasks Requiring Attention -->
+        <div class="box mt-5">
+          <h3 class="title is-4">Tasks Requiring Attention</h3>
+          <div class="content">
+            <ul>
+              <% if @overdue_loans > 0 %>
+                <li class="has-text-danger">
+                  <%= @overdue_loans %> loans are overdue
+                </li>
+              <% end %>
+              <% if @pending_reservations > 0 %>
+                <li class="has-text-info">
+                  <%= @pending_reservations %> reservations need processing
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

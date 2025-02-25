@@ -1,0 +1,147 @@
+<div class="section">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+      <ul>
+        <li><%= link_to "Home", root_path %></li>
+        <li><%= link_to @resource.type.pluralize, send("#{@resource.type.downcase.pluralize}_path") %></li>
+        <li class="is-active"><a href="#" aria-current="page"><%= @resource.title %></a></li>
+      </ul>
+    </nav>
+
+    <div class="columns">
+      <!-- Resource Image -->
+      <div class="column is-4">
+        <div class="card">
+          <div class="card-image">
+            <figure class="image is-4by3">
+              <% if @resource.cover_image.attached? %>
+                <%= image_tag @resource.cover_image %>
+              <% else %>
+                <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Resource cover">
+              <% end %>
+            </figure>
+          </div>
+          
+          <div class="card-content">
+            <div class="content has-text-centered">
+              <% if @resource.available? %>
+                <span class="tag is-success is-medium">
+                  <span class="icon"><i class="fas fa-check"></i></span>
+                  <span>Available</span>
+                </span>
+              <% else %>
+                <span class="tag is-danger is-medium">
+                  <span class="icon"><i class="fas fa-times"></i></span>
+                  <span>Not Available</span>
+                </span>
+              <% end %>
+            </div>
+
+            <% if user_signed_in? && @resource.available? %>
+              <%= button_to new_reservation_path(resource_id: @resource.id), 
+                  method: :get,
+                  class: "button is-primary is-fullwidth mt-4" do %>
+                <span class="icon">
+                  <i class="fas fa-bookmark"></i>
+                </span>
+                <span>Reserve Now</span>
+              <% end %>
+            <% elsif !user_signed_in? %>
+              <%= link_to new_user_session_path, class: "button is-info is-fullwidth mt-4" do %>
+                <span class="icon">
+                  <i class="fas fa-sign-in-alt"></i>
+                </span>
+                <span>Login to Reserve</span>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resource Details -->
+      <div class="column is-8">
+        <div class="card">
+          <div class="card-content">
+            <h1 class="title is-2"><%= @resource.title %></h1>
+            
+            <div class="tags are-medium mb-4">
+              <span class="tag is-primary"><%= @resource.type %></span>
+              <span class="tag is-info"><%= @resource.language %></span>
+              <span class="tag is-warning"><%= @resource.publish_year %></span>
+            </div>
+
+            <div class="content">
+              <% if @resource.is_a?(Book) %>
+                <p class="subtitle is-4">by <%= @resource.author %></p>
+              <% elsif @resource.is_a?(Journal) %>
+                <p class="subtitle is-4">Volume <%= @resource.volume %>, Issue <%= @resource.issue %></p>
+              <% end %>
+
+              <div class="box">
+                <h3 class="title is-5">Description</h3>
+                <p><%= @resource.description %></p>
+              </div>
+
+              <table class="table is-fullwidth">
+                <tbody>
+                  <tr>
+                    <th>Publisher</th>
+                    <td><%= @resource.publisher || "Not specified" %></td>
+                  </tr>
+                  <tr>
+                    <th>Category</th>
+                    <td><%= @resource.category.name %></td>
+                  </tr>
+                  <tr>
+                    <th>Language</th>
+                    <td><%= @resource.language %></td>
+                  </tr>
+                  <tr>
+                    <th>Published</th>
+                    <td><%= @resource.publish_year %></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Availability History -->
+        <div class="card mt-4">
+          <header class="card-header">
+            <p class="card-header-title">
+              <span class="icon-text">
+                <span class="icon">
+                  <i class="fas fa-history"></i>
+                </span>
+                <span>Availability History</span>
+              </span>
+            </p>
+          </header>
+          <div class="card-content">
+            <div class="timeline">
+              <% @resource.loans.recent.each do |loan| %>
+                <div class="timeline-item">
+                  <div class="timeline-marker is-icon">
+                    <i class="fas <%= loan.returned? ? 'fa-check' : 'fa-clock' %>"></i>
+                  </div>
+                  <div class="timeline-content">
+                    <p class="heading"><%= loan.created_at.strftime("%B %d, %Y") %></p>
+                    <p>
+                      <%= loan.returned? ? "Returned" : "Borrowed" %>
+                      <% if loan.returned? %>
+                        on <%= loan.returned_at.strftime("%B %d, %Y") %>
+                      <% else %>
+                        (Due: <%= loan.due_date.strftime("%B %d, %Y") %>)
+                      <% end %>
+                    </p>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

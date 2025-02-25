@@ -1,16 +1,46 @@
-<h1>Welcome to Library System</h1>
+<section class="hero is-primary is-bold">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title">Welcome to Our Library</h1>
+      <h2 class="subtitle">Discover our collection of books and journals</h2>
+    </div>
+  </div>
+</section>
 
-<%= form_tag search_resources_path, method: :get do %>
-  <%= text_field_tag :query, params[:query], placeholder: "Search books or journals..." %>
-  <%= select_tag :category, options_from_collection_for_select(Category.all, :id, :name), prompt: "Select Category" %>
-  <%= submit_tag "Search" %>
-<% end %>
+<section class="section">
+  <div class="container">
+    <!-- Search Form -->
+    <div class="box">
+      <%= form_tag search_path, method: :get, class: "field has-addons has-addons-centered" do %>
+        <div class="control is-expanded">
+          <%= text_field_tag :query, params[:query], class: "input is-medium", placeholder: "Search for books or journals..." %>
+        </div>
+        <div class="control">
+          <button class="button is-primary is-medium">
+            <span class="icon">
+              <i class="fas fa-search"></i>
+            </span>
+          </button>
+        </div>
+      <% end %>
+    </div>
 
-<h2>Latest Books</h2>
-<%= render partial: "books/book", collection: @latest_books %>
+    <!-- Featured Resources -->
+    <div class="columns is-multiline mt-6">
+      <div class="column is-12">
+        <h2 class="title is-3">Latest Books</h2>
+      </div>
+      <%= render partial: "books/book_card", collection: @latest_books, as: :book %>
+    </div>
 
-<h2>Latest Journals</h2>
-<%= render partial: "journals/journal", collection: @latest_journals %>
+    <div class="columns is-multiline mt-6">
+      <div class="column is-12">
+        <h2 class="title is-3">Latest Journals</h2>
+      </div>
+      <%= render partial: "journals/journal_card", collection: @latest_journals, as: :journal %>
+    </div>
+  </div>
+</section>
 
 <p><%= link_to "Search for Resources", search_resources_path %></p>
 <p><%= link_to "Sign up for an account", new_user_registration_path %></p>

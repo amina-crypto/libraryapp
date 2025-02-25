@@ -1,0 +1,13 @@
+<% flash.each do |type, message| %>
+  <div class="notification <%= flash_class(type) %> is-light"
+       data-controller="notification"
+       data-notification-exit-delay-value="4000">
+    <button class="delete" data-action="notification#close"></button>
+    <div class="icon-text">
+      <span class="icon">
+        <i class="fas <%= flash_icon(type) %>"></i>
+      </span>
+      <span><%= message %></span>
+    </div>
+  </div>
+<% end %> 

@@ -1,0 +1,242 @@
+<div class="section">
+  <div class="container">
+    <h1 class="title">
+      <span class="icon-text">
+        <span class="icon has-text-info">
+          <i class="fas fa-chart-bar"></i>
+        </span>
+        <span>Library Statistics</span>
+      </span>
+    </h1>
+
+    <!-- Quick Stats Cards -->
+    <div class="columns is-multiline">
+      <div class="column is-3">
+        <div class="card has-background-primary has-text-white">
+          <div class="card-content">
+            <div class="level">
+              <div class="level-left">
+                <div>
+                  <p class="heading">Total Users</p>
+                  <p class="title has-text-white"><%= @total_users %></p>
+                </div>
+              </div>
+              <div class="level-right">
+                <span class="icon is-large">
+                  <i class="fas fa-users fa-2x"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="column is-3">
+        <div class="card has-background-link has-text-white">
+          <div class="card-content">
+            <div class="level">
+              <div class="level-left">
+                <div>
+                  <p class="heading">Total Resources</p>
+                  <p class="title has-text-white"><%= @total_resources %></p>
+                  <p class="subtitle is-6 has-text-white">
+                    <%= @books_count %> Books, <%= @journals_count %> Journals
+                  </p>
+                </div>
+              </div>
+              <div class="level-right">
+                <span class="icon is-large">
+                  <i class="fas fa-book fa-2x"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="column is-3">
+        <div class="card has-background-info has-text-white">
+          <div class="card-content">
+            <div class="level">
+              <div class="level-left">
+                <div>
+                  <p class="heading">Active Loans</p>
+                  <p class="title has-text-white"><%= @active_loans %></p>
+                  <p class="subtitle is-6 has-text-white">
+                    <%= @overdue_loans %> Overdue
+                  </p>
+                </div>
+              </div>
+              <div class="level-right">
+                <span class="icon is-large">
+                  <i class="fas fa-book-reader fa-2x"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="column is-3">
+        <div class="card has-background-warning has-text-white">
+          <div class="card-content">
+            <div class="level">
+              <div class="level-left">
+                <div>
+                  <p class="heading">Outstanding Fines</p>
+                  <p class="title has-text-white">₹<%= @total_fines %></p>
+                  <p class="subtitle is-6 has-text-white">
+                    <%= @unpaid_fines_count %> Unpaid
+                  </p>
+                </div>
+              </div>
+              <div class="level-right">
+                <span class="icon is-large">
+                  <i class="fas fa-money-bill-wave fa-2x"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="columns is-multiline mt-6">
+      <!-- Loans by Category -->
+      <div class="column is-6">
+        <div class="card">
+          <div class="card-header">
+            <p class="card-header-title">
+              <span class="icon-text">
+                <span class="icon">
+                  <i class="fas fa-chart-pie"></i>
+                </span>
+                <span>Loans by Category</span>
+              </span>
+            </p>
+          </div>
+          <div class="card-content">
+            <canvas id="loansByCategoryChart" height="300"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Monthly Activity -->
+      <div class="column is-6">
+        <div class="card">
+          <div class="card-header">
+            <p class="card-header-title">
+              <span class="icon-text">
+                <span class="icon">
+                  <i class="fas fa-chart-line"></i>
+                </span>
+                <span>Monthly Activity</span>
+              </span>
+            </p>
+          </div>
+          <div class="card-content">
+            <canvas id="monthlyActivityChart" height="300"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity Table -->
+    <div class="card mt-6">
+      <div class="card-header">
+        <p class="card-header-title">
+          <span class="icon-text">
+            <span class="icon">
+              <i class="fas fa-history"></i>
+            </span>
+            <span>Recent Activity</span>
+          </span>
+        </p>
+      </div>
+      <div class="card-content">
+        <table class="table is-fullwidth is-striped">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>User</th>
+              <th>Action</th>
+              <th>Resource</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @recent_activities.each do |activity| %>
+              <tr>
+                <td><%= activity.created_at.strftime("%B %d, %Y %H:%M") %></td>
+                <td><%= activity.user.full_name %></td>
+                <td><%= activity.action_type %></td>
+                <td><%= activity.resource.title %></td>
+                <td>
+                  <span class="tag <%= activity_status_class(activity) %>">
+                    <%= activity.status %>
+                  </span>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :scripts do %>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize Charts
+      const loansByCategoryData = <%= raw @loans_by_category.to_json %>;
+      const monthlyActivityData = <%= raw @monthly_activity.to_json %>;
+
+      // Loans by Category Chart
+      new Chart(document.getElementById('loansByCategoryChart'), {
+        type: 'pie',
+        data: {
+          labels: loansByCategoryData.map(d => d.category),
+          datasets: [{
+            data: loansByCategoryData.map(d => d.count),
+            backgroundColor: [
+              '#3298dc',
+              '#48c774',
+              '#ffdd57',
+              '#f14668',
+              '#b86bff'
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false
+        }
+      });
+
+      // Monthly Activity Chart
+      new Chart(document.getElementById('monthlyActivityChart'), {
+        type: 'line',
+        data: {
+          labels: monthlyActivityData.map(d => d.month),
+          datasets: [{
+            label: 'Loans',
+            data: monthlyActivityData.map(d => d.loans),
+            borderColor: '#3298dc',
+            fill: false
+          }, {
+            label: 'Returns',
+            data: monthlyActivityData.map(d => d.returns),
+            borderColor: '#48c774',
+            fill: false
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false
+        }
+      });
+    });
+  </script>
+<% end %> 

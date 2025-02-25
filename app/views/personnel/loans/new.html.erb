@@ -1,0 +1,135 @@
+<div class="section">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="card">
+          <div class="card-content">
+            <h1 class="title">
+              <span class="icon-text">
+                <span class="icon has-text-primary">
+                  <i class="fas fa-book-reader"></i>
+                </span>
+                <span>Create New Loan</span>
+              </span>
+            </h1>
+
+            <%= form_for [:personnel, @loan] do |f| %>
+              <% if @loan.errors.any? %>
+                <div class="notification is-danger">
+                  <h2><%= pluralize(@loan.errors.count, "error") %> prohibited this loan from being saved:</h2>
+                  <ul>
+                    <% @loan.errors.full_messages.each do |msg| %>
+                      <li><%= msg %></li>
+                    <% end %>
+                  </ul>
+                </div>
+              <% end %>
+
+              <!-- User Selection -->
+              <div class="field">
+                <%= f.label :user_id, "Select User", class: "label" %>
+                <div class="control">
+                  <div class="select is-fullwidth">
+                    <%= f.collection_select :user_id, User.library_users.order(:name), :id, :full_name_with_email, 
+                        { prompt: "Select a user" }, 
+                        { class: "select2", data: { controller: "select2" } } %>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Resource Selection -->
+              <div class="field">
+                <%= f.label :resource_id, "Select Resource", class: "label" %>
+                <div class="control">
+                  <div class="select is-fullwidth">
+                    <%= f.collection_select :resource_id, 
+                        Resource.available.order(:title), 
+                        :id, 
+                        :title_with_type, 
+                        { prompt: "Select a resource" }, 
+                        { class: "select2", data: { controller: "select2" } } %>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Due Date -->
+              <div class="field">
+                <%= f.label :due_date, class: "label" %>
+                <div class="control has-icons-left">
+                  <%= f.date_field :due_date, 
+                      class: "input",
+                      min: Date.today,
+                      value: 2.weeks.from_now.to_date %>
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-calendar"></i>
+                  </span>
+                </div>
+                <p class="help">Default loan period is 2 weeks</p>
+              </div>
+
+              <!-- Notes -->
+              <div class="field">
+                <%= f.label :notes, "Additional Notes (Optional)", class: "label" %>
+                <div class="control">
+                  <%= f.text_area :notes, class: "textarea", placeholder: "Any special notes about this loan..." %>
+                </div>
+              </div>
+
+              <div class="field is-grouped">
+                <div class="control">
+                  <%= f.submit "Create Loan", class: "button is-primary" %>
+                </div>
+                <div class="control">
+                  <%= link_to "Cancel", personnel_loans_path, class: "button is-light" %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Resource Preview -->
+        <div class="card mt-4 is-hidden" data-resource-preview-target="container">
+          <div class="card-content">
+            <h2 class="title is-4">Resource Details</h2>
+            <div class="columns">
+              <div class="column is-4">
+                <figure class="image is-4by3">
+                  <img src="" data-resource-preview-target="image">
+                </figure>
+              </div>
+              <div class="column is-8">
+                <h3 class="title is-5" data-resource-preview-target="title"></h3>
+                <p class="subtitle is-6" data-resource-preview-target="details"></p>
+                <div class="content" data-resource-preview-target="description"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :scripts do %>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize Select2
+      $('.select2').select2({
+        theme: 'bootstrap4',
+        width: '100%'
+      });
+
+      // Resource preview functionality
+      $('#loan_resource_id').on('change', function() {
+        const resourceId = $(this).val();
+        if (resourceId) {
+          fetch(`/personnel/resources/${resourceId}/preview`)
+            .then(response => response.json())
+            .then(data => {
+              updateResourcePreview(data);
+            });
+        }
+      });
+    });
+  </script>
+<% end %> 

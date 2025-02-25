@@ -1,0 +1,97 @@
+<div class="section">
+  <div class="container">
+    <h1 class="title">
+      <span class="icon-text">
+        <span class="icon has-text-danger">
+          <i class="fas fa-money-bill-wave"></i>
+        </span>
+        <span>My Fines</span>
+      </span>
+    </h1>
+
+    <!-- Summary Cards -->
+    <div class="columns">
+      <div class="column is-4">
+        <div class="card has-background-danger-light">
+          <div class="card-content">
+            <div class="level">
+              <div class="level-left">
+                <div>
+                  <p class="heading">Outstanding Fines</p>
+                  <p class="title">₹<%= @outstanding_fines_total %></p>
+                </div>
+              </div>
+              <div class="level-right">
+                <span class="icon is-large has-text-danger">
+                  <i class="fas fa-exclamation-circle fa-2x"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="column is-4">
+        <div class="card has-background-success-light">
+          <div class="card-content">
+            <div class="level">
+              <div class="level-left">
+                <div>
+                  <p class="heading">Paid Fines</p>
+                  <p class="title">₹<%= @paid_fines_total %></p>
+                </div>
+              </div>
+              <div class="level-right">
+                <span class="icon is-large has-text-success">
+                  <i class="fas fa-check-circle fa-2x"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fines Table -->
+    <div class="box mt-5">
+      <table class="table is-fullwidth is-striped">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Resource</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Paid Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @fines.each do |fine| %>
+            <tr>
+              <td><%= fine.created_at.strftime("%B %d, %Y") %></td>
+              <td>
+                <%= link_to fine.loan.resource.title, resource_path(fine.loan.resource) %>
+              </td>
+              <td>₹<%= fine.amount %></td>
+              <td>
+                <% if fine.paid? %>
+                  <span class="tag is-success">
+                    <span class="icon"><i class="fas fa-check"></i></span>
+                    <span>Paid</span>
+                  </span>
+                <% else %>
+                  <span class="tag is-warning">
+                    <span class="icon"><i class="fas fa-clock"></i></span>
+                    <span>Pending</span>
+                  </span>
+                <% end %>
+              </td>
+              <td><%= fine.paid_at&.strftime("%B %d, %Y") || '-' %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <%= paginate @fines %>
+    </div>
+  </div>
+</div> 

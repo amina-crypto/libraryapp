@@ -1,0 +1,159 @@
+<div class="section">
+  <div class="container">
+    <h1 class="title">
+      <span class="icon-text">
+        <span class="icon has-text-danger">
+          <i class="fas fa-money-bill-wave"></i>
+        </span>
+        <span>Manage Fines</span>
+      </span>
+    </h1>
+
+    <!-- Summary Cards -->
+    <div class="columns is-multiline">
+      <div class="column is-3">
+        <div class="card has-background-warning-light">
+          <div class="card-content">
+            <div class="level">
+              <div class="level-left">
+                <div>
+                  <p class="heading">Outstanding Fines</p>
+                  <p class="title">₹<%= @outstanding_total %></p>
+                  <p class="subtitle is-6"><%= @outstanding_count %> pending payments</p>
+                </div>
+              </div>
+              <div class="level-right">
+                <span class="icon is-large has-text-warning">
+                  <i class="fas fa-clock fa-2x"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="column is-3">
+        <div class="card has-background-success-light">
+          <div class="card-content">
+            <div class="level">
+              <div class="level-left">
+                <div>
+                  <p class="heading">Collected Today</p>
+                  <p class="title">₹<%= @collected_today %></p>
+                  <p class="subtitle is-6"><%= @collected_today_count %> payments</p>
+                </div>
+              </div>
+              <div class="level-right">
+                <span class="icon is-large has-text-success">
+                  <i class="fas fa-money-bill-wave fa-2x"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="box mt-4">
+      <%= form_tag personnel_fines_path, method: :get, class: "form" do %>
+        <div class="columns">
+          <div class="column is-4">
+            <div class="field">
+              <label class="label">Search User</label>
+              <div class="control has-icons-left">
+                <%= text_field_tag :query, params[:query], class: "input", placeholder: "Search by user name or email..." %>
+                <span class="icon is-small is-left">
+                  <i class="fas fa-search"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="column is-3">
+            <div class="field">
+              <label class="label">Status</label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <%= select_tag :status, 
+                      options_for_select([
+                        ['All', ''],
+                        ['Pending', 'pending'],
+                        ['Paid', 'paid']
+                      ], params[:status]) %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="column is-2">
+            <div class="field">
+              <label class="label">&nbsp;</label>
+              <div class="control">
+                <%= submit_tag "Filter", class: "button is-info is-fullwidth" %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Fines Table -->
+    <div class="box">
+      <table class="table is-fullwidth is-striped">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Resource</th>
+            <th>Fine Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Days Overdue</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @fines.each do |fine| %>
+            <tr>
+              <td>
+                <%= link_to fine.user.full_name, personnel_user_path(fine.user) %>
+              </td>
+              <td>
+                <%= link_to fine.loan.resource.title, resource_path(fine.loan.resource) %>
+              </td>
+              <td><%= fine.created_at.strftime("%B %d, %Y") %></td>
+              <td>₹<%= fine.amount %></td>
+              <td>
+                <% if fine.paid? %>
+                  <span class="tag is-success">
+                    <span class="icon"><i class="fas fa-check"></i></span>
+                    <span>Paid</span>
+                  </span>
+                <% else %>
+                  <span class="tag is-warning">
+                    <span class="icon"><i class="fas fa-clock"></i></span>
+                    <span>Pending</span>
+                  </span>
+                <% end %>
+              </td>
+              <td><%= fine.days_overdue %></td>
+              <td>
+                <% unless fine.paid? %>
+                  <%= button_to mark_as_paid_personnel_fine_path(fine), 
+                      method: :patch,
+                      class: "button is-small is-success",
+                      data: { confirm: "Mark this fine as paid?" } do %>
+                    <span class="icon">
+                      <i class="fas fa-check"></i>
+                    </span>
+                    <span>Mark as Paid</span>
+                  <% end %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <%= paginate @fines %>
+    </div>
+  </div>
+</div> 

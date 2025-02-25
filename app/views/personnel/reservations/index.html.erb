@@ -1,0 +1,128 @@
+<div class="section">
+  <div class="container">
+    <h1 class="title">
+      <span class="icon-text">
+        <span class="icon has-text-info">
+          <i class="fas fa-bookmark"></i>
+        </span>
+        <span>Manage Reservations</span>
+      </span>
+    </h1>
+
+    <!-- Status Cards -->
+    <div class="columns">
+      <div class="column is-4">
+        <div class="card has-background-warning-light">
+          <div class="card-content">
+            <div class="level">
+              <div class="level-left">
+                <div>
+                  <p class="heading">Pending Reservations</p>
+                  <p class="title"><%= @pending_count %></p>
+                </div>
+              </div>
+              <div class="level-right">
+                <span class="icon is-large has-text-warning">
+                  <i class="fas fa-clock fa-2x"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="column is-4">
+        <div class="card has-background-success-light">
+          <div class="card-content">
+            <div class="level">
+              <div class="level-left">
+                <div>
+                  <p class="heading">Approved Today</p>
+                  <p class="title"><%= @approved_today_count %></p>
+                </div>
+              </div>
+              <div class="level-right">
+                <span class="icon is-large has-text-success">
+                  <i class="fas fa-check-circle fa-2x"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reservations Table -->
+    <div class="box mt-5">
+      <table class="table is-fullwidth is-striped">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Resource</th>
+            <th>Requested At</th>
+            <th>Status</th>
+            <th>Expires At</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @reservations.each do |reservation| %>
+            <tr>
+              <td>
+                <%= link_to reservation.user.full_name, personnel_user_path(reservation.user) %>
+              </td>
+              <td>
+                <%= link_to reservation.resource.title, resource_path(reservation.resource) %>
+              </td>
+              <td><%= reservation.created_at.strftime("%B %d, %Y %H:%M") %></td>
+              <td>
+                <% case reservation.status %>
+                <% when 'pending' %>
+                  <span class="tag is-warning">Pending</span>
+                <% when 'approved' %>
+                  <span class="tag is-success">Approved</span>
+                <% when 'rejected' %>
+                  <span class="tag is-danger">Rejected</span>
+                <% end %>
+              </td>
+              <td>
+                <% if reservation.expires_at %>
+                  <span class="<%= reservation.expired? ? 'has-text-danger' : '' %>">
+                    <%= reservation.expires_at.strftime("%B %d, %Y %H:%M") %>
+                  </span>
+                <% else %>
+                  -
+                <% end %>
+              </td>
+              <td>
+                <% if reservation.pending? %>
+                  <div class="buttons are-small">
+                    <%= button_to approve_personnel_reservation_path(reservation),
+                        method: :patch,
+                        class: "button is-success" do %>
+                      <span class="icon">
+                        <i class="fas fa-check"></i>
+                      </span>
+                      <span>Approve</span>
+                    <% end %>
+
+                    <%= button_to reject_personnel_reservation_path(reservation),
+                        method: :patch,
+                        class: "button is-danger" do %>
+                      <span class="icon">
+                        <i class="fas fa-times"></i>
+                      </span>
+                      <span>Reject</span>
+                    <% end %>
+                  </div>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <%= paginate @reservations %>
+    </div>
+  </div>
+</div> 

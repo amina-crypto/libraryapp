@@ -1,0 +1,117 @@
+<div class="section">
+  <div class="container">
+    <div class="columns">
+      <!-- Profile Card -->
+      <div class="column is-4">
+        <div class="card">
+          <div class="card-content">
+            <div class="has-text-centered mb-4">
+              <figure class="image is-128x128 is-inline-block">
+                <% if current_user.avatar.attached? %>
+                  <%= image_tag current_user.avatar, class: "is-rounded" %>
+                <% else %>
+                  <img class="is-rounded" src="https://bulma.io/images/placeholders/128x128.png">
+                <% end %>
+              </figure>
+              <h2 class="title is-4 mt-2"><%= current_user.full_name %></h2>
+              <p class="subtitle is-6">
+                <span class="tag is-primary">
+                  <%= current_user.role.humanize %>
+                </span>
+              </p>
+            </div>
+
+            <div class="content">
+              <p>
+                <span class="icon">
+                  <i class="fas fa-envelope"></i>
+                </span>
+                <%= current_user.email %>
+              </p>
+              <p>
+                <span class="icon">
+                  <i class="fas fa-map-marker-alt"></i>
+                </span>
+                <%= current_user.contact_address || "No address provided" %>
+              </p>
+              <p>
+                <span class="icon">
+                  <i class="fas fa-calendar"></i>
+                </span>
+                Member since <%= current_user.created_at.strftime("%B %Y") %>
+              </p>
+            </div>
+
+            <%= link_to edit_user_profile_path, class: "button is-primary is-fullwidth" do %>
+              <span class="icon">
+                <i class="fas fa-edit"></i>
+              </span>
+              <span>Edit Profile</span>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Activity Summary -->
+        <div class="card mt-4">
+          <div class="card-content">
+            <h3 class="title is-5">Activity Summary</h3>
+            <div class="content">
+              <div class="level">
+                <div class="level-item has-text-centered">
+                  <div>
+                    <p class="heading">Total Loans</p>
+                    <p class="title"><%= @total_loans %></p>
+                  </div>
+                </div>
+                <div class="level-item has-text-centered">
+                  <div>
+                    <p class="heading">Active Loans</p>
+                    <p class="title"><%= @active_loans %></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="column is-8">
+        <div class="card">
+          <header class="card-header">
+            <p class="card-header-title">
+              <span class="icon-text">
+                <span class="icon">
+                  <i class="fas fa-history"></i>
+                </span>
+                <span>Recent Activity</span>
+              </span>
+            </p>
+          </header>
+          <div class="card-content">
+            <div class="content">
+              <% @recent_activities.each do |activity| %>
+                <article class="media">
+                  <div class="media-left">
+                    <span class="icon is-medium">
+                      <%= activity_icon(activity) %>
+                    </span>
+                  </div>
+                  <div class="media-content">
+                    <div class="content">
+                      <p>
+                        <strong><%= activity_title(activity) %></strong>
+                        <br>
+                        <small><%= time_ago_in_words(activity.created_at) %> ago</small>
+                      </p>
+                    </div>
+                  </div>
+                </article>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

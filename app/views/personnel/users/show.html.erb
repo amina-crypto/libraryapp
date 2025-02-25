@@ -1,0 +1,211 @@
+<div class="section">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+      <ul>
+        <li><%= link_to "Users", personnel_users_path %></li>
+        <li class="is-active"><a href="#" aria-current="page"><%= @user.full_name %></a></li>
+      </ul>
+    </nav>
+
+    <div class="columns">
+      <!-- User Profile Card -->
+      <div class="column is-4">
+        <div class="card">
+          <div class="card-content">
+            <div class="has-text-centered mb-4">
+              <figure class="image is-128x128 is-inline-block">
+                <% if @user.avatar.attached? %>
+                  <%= image_tag @user.avatar, class: "is-rounded" %>
+                <% else %>
+                  <img class="is-rounded" src="https://bulma.io/images/placeholders/128x128.png">
+                <% end %>
+              </figure>
+              
+              <h2 class="title is-4 mt-2"><%= @user.full_name %></h2>
+              <p class="subtitle is-6">
+                <span class="tag <%= @user.library_personnel? ? 'is-info' : 'is-primary' %>">
+                  <%= @user.role.humanize %>
+                </span>
+                <span class="tag <%= @user.active? ? 'is-success' : 'is-danger' %>">
+                  <%= @user.active? ? 'Active' : 'Inactive' %>
+                </span>
+              </p>
+            </div>
+
+            <div class="content">
+              <p>
+                <span class="icon">
+                  <i class="fas fa-envelope"></i>
+                </span>
+                <%= @user.email %>
+              </p>
+              <p>
+                <span class="icon">
+                  <i class="fas fa-map-marker-alt"></i>
+                </span>
+                <%= @user.contact_address || "No address provided" %>
+              </p>
+              <p>
+                <span class="icon">
+                  <i class="fas fa-calendar"></i>
+                </span>
+                Member since <%= @user.created_at.strftime("%B %d, %Y") %>
+              </p>
+            </div>
+
+            <div class="buttons">
+              <%= link_to edit_personnel_user_path(@user), class: "button is-info is-fullwidth" do %>
+                <span class="icon">
+                  <i class="fas fa-edit"></i>
+                </span>
+                <span>Edit User</span>
+              <% end %>
+
+              <%= button_to toggle_status_personnel_user_path(@user),
+                  method: :patch,
+                  class: "button #{@user.active? ? 'is-danger' : 'is-success'} is-fullwidth",
+                  data: { confirm: "Are you sure?" } do %>
+                <span class="icon">
+                  <i class="fas <%= @user.active? ? 'fa-ban' : 'fa-check' %>"></i>
+                </span>
+                <span><%= @user.active? ? 'Deactivate' : 'Activate' %> User</span>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Statistics -->
+        <div class="card mt-4">
+          <div class="card-content">
+            <h3 class="title is-5">Statistics</h3>
+            <div class="level">
+              <div class="level-item has-text-centered">
+                <div>
+                  <p class="heading">Total Loans</p>
+                  <p class="title"><%= @user.loans.count %></p>
+                </div>
+              </div>
+              <div class="level-item has-text-centered">
+                <div>
+                  <p class="heading">Active Loans</p>
+                  <p class="title"><%= @user.active_loans.count %></p>
+                </div>
+              </div>
+              <div class="level-item has-text-centered">
+                <div>
+                  <p class="heading">Overdue</p>
+                  <p class="title has-text-danger"><%= @user.overdue_loans.count %></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Activity -->
+      <div class="column is-8">
+        <!-- Current Loans -->
+        <div class="card">
+          <header class="card-header">
+            <p class="card-header-title">
+              <span class="icon-text">
+                <span class="icon">
+                  <i class="fas fa-book-reader"></i>
+                </span>
+                <span>Current Loans</span>
+              </span>
+            </p>
+          </header>
+          <div class="card-content">
+            <% if @user.active_loans.any? %>
+              <table class="table is-fullwidth is-striped">
+                <thead>
+                  <tr>
+                    <th>Resource</th>
+                    <th>Borrowed</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @user.active_loans.each do |loan| %>
+                    <tr class="<%= 'has-text-danger' if loan.overdue? %>">
+                      <td><%= link_to loan.resource.title, resource_path(loan.resource) %></td>
+                      <td><%= loan.created_at.strftime("%B %d, %Y") %></td>
+                      <td><%= loan.due_date.strftime("%B %d, %Y") %></td>
+                      <td>
+                        <%= render 'shared/loan_status', loan: loan %>
+                      </td>
+                      <td>
+                        <%= button_to return_personnel_loan_path(loan),
+                            method: :patch,
+                            class: "button is-small is-success" do %>
+                          <span class="icon">
+                            <i class="fas fa-check"></i>
+                          </span>
+                          <span>Return</span>
+                        <% end %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            <% else %>
+              <p class="has-text-centered">No active loans</p>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Outstanding Fines -->
+        <div class="card mt-4">
+          <header class="card-header">
+            <p class="card-header-title">
+              <span class="icon-text">
+                <span class="icon">
+                  <i class="fas fa-money-bill-wave"></i>
+                </span>
+                <span>Outstanding Fines</span>
+              </span>
+            </p>
+          </header>
+          <div class="card-content">
+            <% if @user.unpaid_fines.any? %>
+              <table class="table is-fullwidth is-striped">
+                <thead>
+                  <tr>
+                    <th>Resource</th>
+                    <th>Fine Date</th>
+                    <th>Amount</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @user.unpaid_fines.each do |fine| %>
+                    <tr>
+                      <td><%= link_to fine.loan.resource.title, resource_path(fine.loan.resource) %></td>
+                      <td><%= fine.created_at.strftime("%B %d, %Y") %></td>
+                      <td>₹<%= fine.amount %></td>
+                      <td>
+                        <%= button_to collect_personnel_fine_path(fine),
+                            method: :patch,
+                            class: "button is-small is-success" do %>
+                          <span class="icon">
+                            <i class="fas fa-money-bill"></i>
+                          </span>
+                          <span>Collect</span>
+                        <% end %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            <% else %>
+              <p class="has-text-centered">No outstanding fines</p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

@@ -1,0 +1,94 @@
+<div class="section">
+  <div class="container">
+    <h1 class="title">
+      <span class="icon-text">
+        <span class="icon has-text-primary">
+          <i class="fas fa-book-reader"></i>
+        </span>
+        <span>My Loans</span>
+      </span>
+    </h1>
+
+    <!-- Loan Status Filters -->
+    <div class="tabs is-boxed mb-4">
+      <ul>
+        <li class="<%= 'is-active' if params[:filter] == 'active' || params[:filter].nil? %>">
+          <%= link_to user_loans_path(filter: 'active') do %>
+            <span class="icon"><i class="fas fa-clock"></i></span>
+            <span>Active</span>
+          <% end %>
+        </li>
+        <li class="<%= 'is-active' if params[:filter] == 'overdue' %>">
+          <%= link_to user_loans_path(filter: 'overdue') do %>
+            <span class="icon has-text-danger"><i class="fas fa-exclamation-circle"></i></span>
+            <span>Overdue</span>
+          <% end %>
+        </li>
+        <li class="<%= 'is-active' if params[:filter] == 'returned' %>">
+          <%= link_to user_loans_path(filter: 'returned') do %>
+            <span class="icon has-text-success"><i class="fas fa-check-circle"></i></span>
+            <span>Returned</span>
+          <% end %>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Loans Table -->
+    <div class="box">
+      <table class="table is-fullwidth is-striped">
+        <thead>
+          <tr>
+            <th>Resource</th>
+            <th>Type</th>
+            <th>Borrowed On</th>
+            <th>Due Date</th>
+            <th>Status</th>
+            <th>Fine</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @loans.each do |loan| %>
+            <tr class="<%= 'has-text-danger' if loan.overdue? %>">
+              <td>
+                <%= link_to loan.resource.title, resource_path(loan.resource), class: "has-text-weight-medium" %>
+              </td>
+              <td><%= loan.resource.type %></td>
+              <td><%= loan.created_at.strftime("%B %d, %Y") %></td>
+              <td><%= loan.due_date.strftime("%B %d, %Y") %></td>
+              <td>
+                <% if loan.returned? %>
+                  <span class="tag is-success">
+                    <span class="icon"><i class="fas fa-check"></i></span>
+                    <span>Returned</span>
+                  </span>
+                <% elsif loan.overdue? %>
+                  <span class="tag is-danger">
+                    <span class="icon"><i class="fas fa-exclamation-triangle"></i></span>
+                    <span>Overdue</span>
+                  </span>
+                <% else %>
+                  <span class="tag is-info">
+                    <span class="icon"><i class="fas fa-clock"></i></span>
+                    <span>Active</span>
+                  </span>
+                <% end %>
+              </td>
+              <td>
+                <% if loan.fine %>
+                  <span class="tag is-warning">
+                    <span class="icon"><i class="fas fa-money-bill"></i></span>
+                    <span>₹<%= loan.fine.amount %></span>
+                  </span>
+                <% else %>
+                  -
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <%= paginate @loans %>
+    </div>
+  </div>
+</div> 

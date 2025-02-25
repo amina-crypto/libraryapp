@@ -1,0 +1,183 @@
+<div class="section">
+  <div class="container">
+    <div class="level">
+      <div class="level-left">
+        <div class="level-item">
+          <h1 class="title">
+            <span class="icon-text">
+              <span class="icon has-text-primary">
+                <i class="fas fa-book-reader"></i>
+              </span>
+              <span>Manage Loans</span>
+            </span>
+          </h1>
+        </div>
+      </div>
+      <div class="level-right">
+        <div class="level-item">
+          <%= link_to new_personnel_loan_path, class: "button is-primary" do %>
+            <span class="icon">
+              <i class="fas fa-plus"></i>
+            </span>
+            <span>Create New Loan</span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="columns is-multiline">
+      <div class="column is-3">
+        <div class="card has-background-info has-text-white">
+          <div class="card-content">
+            <div class="level">
+              <div class="level-left">
+                <div>
+                  <p class="heading">Active Loans</p>
+                  <p class="title has-text-white"><%= @active_loans_count %></p>
+                </div>
+              </div>
+              <div class="level-right">
+                <span class="icon is-large">
+                  <i class="fas fa-book-open fa-2x"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="column is-3">
+        <div class="card has-background-danger has-text-white">
+          <div class="card-content">
+            <div class="level">
+              <div class="level-left">
+                <div>
+                  <p class="heading">Overdue Loans</p>
+                  <p class="title has-text-white"><%= @overdue_loans_count %></p>
+                </div>
+              </div>
+              <div class="level-right">
+                <span class="icon is-large">
+                  <i class="fas fa-exclamation-circle fa-2x"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="box">
+      <%= form_tag personnel_loans_path, method: :get, class: "form" do %>
+        <div class="columns">
+          <div class="column is-4">
+            <div class="field">
+              <label class="label">Search User or Resource</label>
+              <div class="control has-icons-left">
+                <%= text_field_tag :query, params[:query], class: "input", placeholder: "Search..." %>
+                <span class="icon is-small is-left">
+                  <i class="fas fa-search"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="column is-3">
+            <div class="field">
+              <label class="label">Status</label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <%= select_tag :status, 
+                      options_for_select([
+                        ['All', ''],
+                        ['Active', 'active'],
+                        ['Overdue', 'overdue'],
+                        ['Returned', 'returned']
+                      ], params[:status]) %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="column is-2">
+            <div class="field">
+              <label class="label">&nbsp;</label>
+              <div class="control">
+                <%= submit_tag "Filter", class: "button is-info is-fullwidth" %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Loans Table -->
+    <div class="box">
+      <table class="table is-fullwidth is-striped">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Resource</th>
+            <th>Borrowed On</th>
+            <th>Due Date</th>
+            <th>Status</th>
+            <th>Fine</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @loans.each do |loan| %>
+            <tr class="<%= 'has-text-danger' if loan.overdue? %>">
+              <td>
+                <%= link_to loan.user.full_name, personnel_user_path(loan.user) %>
+              </td>
+              <td>
+                <%= link_to loan.resource.title, resource_path(loan.resource) %>
+              </td>
+              <td><%= loan.created_at.strftime("%B %d, %Y") %></td>
+              <td><%= loan.due_date.strftime("%B %d, %Y") %></td>
+              <td>
+                <%= render 'shared/loan_status', loan: loan %>
+              </td>
+              <td>
+                <% if loan.fine %>
+                  <span class="tag is-warning">
+                    <span class="icon"><i class="fas fa-money-bill"></i></span>
+                    <span>₹<%= loan.fine.amount %></span>
+                  </span>
+                <% end %>
+              </td>
+              <td>
+                <div class="buttons are-small">
+                  <% if !loan.returned? %>
+                    <%= button_to return_personnel_loan_path(loan), 
+                        method: :patch, 
+                        class: "button is-success" do %>
+                      <span class="icon">
+                        <i class="fas fa-check"></i>
+                      </span>
+                      <span>Return</span>
+                    <% end %>
+                  <% end %>
+                  
+                  <% if loan.overdue? && !loan.fine %>
+                    <%= button_to process_fine_personnel_loan_path(loan), 
+                        method: :patch,
+                        class: "button is-warning" do %>
+                      <span class="icon">
+                        <i class="fas fa-money-bill"></i>
+                      </span>
+                      <span>Process Fine</span>
+                    <% end %>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <%= paginate @loans %>
+    </div>
+  </div>
+</div> 

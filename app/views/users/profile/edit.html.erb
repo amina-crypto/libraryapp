@@ -1,0 +1,105 @@
+<div class="section">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="card">
+          <div class="card-content">
+            <h1 class="title">
+              <span class="icon-text">
+                <span class="icon has-text-primary">
+                  <i class="fas fa-user-edit"></i>
+                </span>
+                <span>Edit Profile</span>
+              </span>
+            </h1>
+
+            <%= form_for(current_user, url: user_profile_path, html: { method: :patch }) do |f| %>
+              <% if current_user.errors.any? %>
+                <div class="notification is-danger">
+                  <h2><%= pluralize(current_user.errors.count, "error") %> prohibited this profile from being saved:</h2>
+                  <ul>
+                    <% current_user.errors.full_messages.each do |msg| %>
+                      <li><%= msg %></li>
+                    <% end %>
+                  </ul>
+                </div>
+              <% end %>
+
+              <div class="field">
+                <%= f.label :avatar, class: "label" %>
+                <div class="file has-name is-fullwidth">
+                  <label class="file-label">
+                    <%= f.file_field :avatar, class: "file-input", accept: 'image/*' %>
+                    <span class="file-cta">
+                      <span class="file-icon">
+                        <i class="fas fa-upload"></i>
+                      </span>
+                      <span class="file-label">
+                        Choose a file…
+                      </span>
+                    </span>
+                    <span class="file-name">
+                      No file selected
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="columns">
+                <div class="column">
+                  <div class="field">
+                    <%= f.label :name, class: "label" %>
+                    <div class="control has-icons-left">
+                      <%= f.text_field :name, class: "input" %>
+                      <span class="icon is-small is-left">
+                        <i class="fas fa-user"></i>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="column">
+                  <div class="field">
+                    <%= f.label :surname, class: "label" %>
+                    <div class="control has-icons-left">
+                      <%= f.text_field :surname, class: "input" %>
+                      <span class="icon is-small is-left">
+                        <i class="fas fa-user"></i>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field">
+                <%= f.label :contact_address, class: "label" %>
+                <div class="control has-icons-left">
+                  <%= f.text_area :contact_address, class: "textarea" %>
+                </div>
+              </div>
+
+              <div class="field">
+                <%= f.label :current_password, "Current Password (required to save changes)", class: "label" %>
+                <div class="control has-icons-left">
+                  <%= f.password_field :current_password, class: "input" %>
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-lock"></i>
+                  </span>
+                </div>
+              </div>
+
+              <div class="field is-grouped">
+                <div class="control">
+                  <%= f.submit "Update Profile", class: "button is-primary" %>
+                </div>
+                <div class="control">
+                  <%= link_to "Cancel", user_profile_path, class: "button is-light" %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
