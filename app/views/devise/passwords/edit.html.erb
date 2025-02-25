@@ -1,25 +1,311 @@
-<h2>Change your password</h2>
+<section class="section">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-5">
+        <div class="box has-background-primary-light">
+          <!-- Header -->
+          <div class="has-text-centered mb-6">
+            <span class="icon is-large has-text-primary">
+              <i class="fas fa-lock fa-2x"></i>
+            </span>
+            <h1 class="title is-3 mt-2">Create New Password</h1>
+            <p class="subtitle is-6 has-text-grey">
+              Please choose a strong password for your account
+            </p>
+          </div>
 
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
-  <%= f.hidden_field :reset_password_token %>
+          <%= form_for(resource, as: resource_name, 
+              url: password_path(resource_name), 
+              html: { method: :put, 
+                      data: { controller: "password-validation" } }) do |f| %>
+            
+            <%= render "devise/shared/error_messages", resource: resource %>
+            <%= f.hidden_field :reset_password_token %>
 
-  <div class="field">
-    <%= f.label :password, "New password" %><br />
-    <% if @minimum_password_length %>
-      <em>(<%= @minimum_password_length %> characters minimum)</em><br />
-    <% end %>
-    <%= f.password_field :password, autofocus: true, autocomplete: "new-password" %>
+            <!-- Password Strength Indicator -->
+            <div class="field">
+              <label class="label">Password Strength</label>
+              <progress class="progress is-primary" 
+                        value="0" 
+                        max="100" 
+                        data-password-validation-target="strengthMeter">
+              </progress>
+              <p class="help" data-password-validation-target="strengthText">
+                Enter a password
+              </p>
+            </div>
+
+            <!-- New Password Field -->
+            <div class="field">
+              <div class="control has-icons-left has-icons-right">
+                <%= f.password_field :password, 
+                    class: "input is-medium",
+                    placeholder: "New password",
+                    data: { 
+                      action: "input->password-validation#checkStrength",
+                      password-validation-target: "passwordInput"
+                    } %>
+                <span class="icon is-small is-left">
+                  <i class="fas fa-lock"></i>
+                </span>
+                <span class="icon is-small is-right" 
+                      data-password-validation-target="validationIcon">
+                </span>
+              </div>
+              <p class="help">
+                Minimum <%= @minimum_password_length %> characters
+              </p>
+            </div>
+
+            <!-- Confirm Password Field -->
+            <div class="field">
+              <div class="control has-icons-left has-icons-right">
+                <%= f.password_field :password_confirmation,
+                    class: "input is-medium",
+                    placeholder: "Confirm new password",
+                    data: { 
+                      action: "input->password-validation#checkMatch",
+                      password-validation-target: "confirmInput"
+                    } %>
+                <span class="icon is-small is-left">
+                  <i class="fas fa-lock"></i>
+                </span>
+                <span class="icon is-small is-right" 
+                      data-password-validation-target="matchIcon">
+                </span>
+              </div>
+              <p class="help is-danger" 
+                 data-password-validation-target="matchError">
+              </p>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="field mt-5">
+              <%= f.submit "Change Password", 
+                  class: "button is-primary is-fullwidth is-medium",
+                  data: { 
+                    password_validation_target: "submitButton",
+                    action: "password-validation#validateSubmit"
+                  } %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Password Requirements Card -->
+        <div class="card mt-4">
+          <div class="card-content">
+            <h3 class="title is-6">Password Requirements</h3>
+            <ul class="requirements-list">
+              <li data-password-validation-target="lengthCheck">
+                <span class="icon">
+                  <i class="fas fa-circle"></i>
+                </span>
+                At least <%= @minimum_password_length %> characters
+              </li>
+              <li data-password-validation-target="upperCheck">
+                <span class="icon">
+                  <i class="fas fa-circle"></i>
+                </span>
+                One uppercase letter
+              </li>
+              <li data-password-validation-target="numberCheck">
+                <span class="icon">
+                  <i class="fas fa-circle"></i>
+                </span>
+                One number
+              </li>
+              <li data-password-validation-target="specialCheck">
+                <span class="icon">
+                  <i class="fas fa-circle"></i>
+                </span>
+                One special character
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+</section>
 
-  <div class="field">
-    <%= f.label :password_confirmation, "Confirm new password" %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
+<% content_for :styles do %>
+  <style>
+    .requirements-list {
+      list-style: none;
+      margin-left: 0;
+    }
 
-  <div class="actions">
-    <%= f.submit "Change my password" %>
-  </div>
+    .requirements-list li {
+      margin-bottom: 0.5rem;
+      color: #7a7a7a;
+    }
+
+    .requirements-list li.is-valid {
+      color: #48c774;
+    }
+
+    .requirements-list li.is-valid .icon {
+      color: #48c774;
+    }
+
+    .progress {
+      margin-bottom: 0.5rem;
+    }
+
+    .progress.is-weak {
+      background-color: #ff3860;
+    }
+
+    .progress.is-medium {
+      background-color: #ffdd57;
+    }
+
+    .progress.is-strong {
+      background-color: #48c774;
+    }
+
+    .input.is-valid {
+      border-color: #48c774;
+    }
+
+    .input.is-invalid {
+      border-color: #ff3860;
+    }
+  </style>
 <% end %>
 
-<%= render "devise/shared/links" %>
+<% content_for :scripts do %>
+  <script>
+    import { Controller } from "@hotwired/stimulus"
+
+    export default class extends Controller {
+      static targets = [
+        "passwordInput", "confirmInput", "strengthMeter", 
+        "strengthText", "validationIcon", "matchIcon", 
+        "matchError", "submitButton", "lengthCheck", 
+        "upperCheck", "numberCheck", "specialCheck"
+      ]
+
+      checkStrength() {
+        const password = this.passwordInputTarget.value
+        let strength = 0
+        
+        // Reset requirements
+        this.resetRequirements()
+
+        // Check length
+        if (password.length >= <%= @minimum_password_length %>) {
+          strength += 25
+          this.lengthCheckTarget.classList.add('is-valid')
+        }
+
+        // Check uppercase
+        if (/[A-Z]/.test(password)) {
+          strength += 25
+          this.upperCheckTarget.classList.add('is-valid')
+        }
+
+        // Check numbers
+        if (/[0-9]/.test(password)) {
+          strength += 25
+          this.numberCheckTarget.classList.add('is-valid')
+        }
+
+        // Check special characters
+        if (/[^A-Za-z0-9]/.test(password)) {
+          strength += 25
+          this.specialCheckTarget.classList.add('is-valid')
+        }
+
+        this.updateStrengthIndicator(strength)
+        this.checkMatch()
+      }
+
+      checkMatch() {
+        const password = this.passwordInputTarget.value
+        const confirm = this.confirmInputTarget.value
+
+        if (confirm.length === 0) {
+          this.matchIconTarget.innerHTML = ''
+          this.matchErrorTarget.textContent = ''
+          return
+        }
+
+        if (password === confirm) {
+          this.matchIconTarget.innerHTML = '<i class="fas fa-check has-text-success"></i>'
+          this.matchErrorTarget.textContent = ''
+          this.confirmInputTarget.classList.add('is-valid')
+          this.confirmInputTarget.classList.remove('is-invalid')
+        } else {
+          this.matchIconTarget.innerHTML = '<i class="fas fa-times has-text-danger"></i>'
+          this.matchErrorTarget.textContent = 'Passwords do not match'
+          this.confirmInputTarget.classList.add('is-invalid')
+          this.confirmInputTarget.classList.remove('is-valid')
+        }
+      }
+
+      updateStrengthIndicator(strength) {
+        this.strengthMeterTarget.value = strength
+
+        if (strength < 50) {
+          this.strengthMeterTarget.classList.add('is-weak')
+          this.strengthTextTarget.textContent = 'Weak password'
+          this.strengthTextTarget.classList.add('has-text-danger')
+        } else if (strength < 75) {
+          this.strengthMeterTarget.classList.add('is-medium')
+          this.strengthTextTarget.textContent = 'Medium strength password'
+          this.strengthTextTarget.classList.add('has-text-warning')
+        } else {
+          this.strengthMeterTarget.classList.add('is-strong')
+          this.strengthTextTarget.textContent = 'Strong password'
+          this.strengthTextTarget.classList.add('has-text-success')
+        }
+      }
+
+      resetRequirements() {
+        [
+          this.lengthCheckTarget,
+          this.upperCheckTarget,
+          this.numberCheckTarget,
+          this.specialCheckTarget
+        ].forEach(el => el.classList.remove('is-valid'))
+      }
+
+      validateSubmit(event) {
+        const password = this.passwordInputTarget.value
+        const confirm = this.confirmInputTarget.value
+
+        if (password !== confirm) {
+          event.preventDefault()
+          this.showAlert('Passwords do not match!', 'is-danger')
+          return
+        }
+
+        if (this.strengthMeterTarget.value < 75) {
+          event.preventDefault()
+          this.showAlert('Please choose a stronger password!', 'is-warning')
+          return
+        }
+      }
+
+      showAlert(message, type) {
+        const alert = document.createElement('div')
+        alert.className = `notification ${type} is-light`
+        alert.innerHTML = `
+          <button class="delete"></button>
+          ${message}
+        `
+        
+        alert.querySelector('.delete').addEventListener('click', () => {
+          alert.remove()
+        })
+
+        this.element.insertBefore(alert, this.element.firstChild)
+
+        setTimeout(() => {
+          alert.remove()
+        }, 5000)
+      }
+    }
+  </script>
+<% end %>

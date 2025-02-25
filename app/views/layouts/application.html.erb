@@ -23,70 +23,11 @@
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <%= yield :styles %>
   </head>
 
   <body class="has-navbar-fixed-top">
-    <!-- Navbar -->
-    <nav class="navbar is-fixed-top is-primary">
-      <div class="navbar-brand">
-        <%= link_to root_path, class: "navbar-item" do %>
-          <span class="icon">
-            <i class="fas fa-book-reader"></i>
-          </span>
-          <span class="has-text-weight-bold">Library System</span>
-        <% end %>
-
-        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-        </a>
-      </div>
-
-      <div class="navbar-menu">
-        <div class="navbar-end">
-          <div class="navbar-item">
-            <% if user_signed_in? %>
-              <div class="buttons">
-                <span class="tag is-info is-medium mr-2">
-                  Logged as <%= current_user.library_personnel? ? "personnel" : "user" %>: 
-                  <%= "#{current_user.name} #{current_user.surname}" %>
-                </span>
-                <%= link_to destroy_user_session_path, method: :delete, class: "button is-light" do %>
-                  <span class="icon">
-                    <i class="fas fa-sign-out-alt"></i>
-                  </span>
-                  <span>Logout</span>
-                <% end %>
-              </div>
-            <% else %>
-              <div class="buttons">
-                <%= link_to new_user_registration_path, class: "button is-primary" do %>
-                  <span class="icon">
-                    <i class="fas fa-user-plus"></i>
-                  </span>
-                  <span>Sign up</span>
-                <% end %>
-                <%= link_to new_user_session_path, class: "button is-light" do %>
-                  <span class="icon">
-                    <i class="fas fa-sign-in-alt"></i>
-                  </span>
-                  <span>Log in</span>
-                <% end %>
-              </div>
-            <% end %>
-          </div>
-        </div>
-      </div>
-    </nav>
-
-    <!-- Flash Messages -->
-    <% flash.each do |name, msg| %>
-      <div class="notification <%= name == 'notice' ? 'is-success' : 'is-danger' %> is-light">
-        <button class="delete"></button>
-        <%= msg %>
-      </div>
-    <% end %>
+    <%= render 'shared/header' %>
 
     <!-- Main Content -->
     <main class="section">
@@ -103,5 +44,7 @@
         </p>
       </div>
     </footer>
+
+    <%= yield :scripts %>
   </body>
 </html>

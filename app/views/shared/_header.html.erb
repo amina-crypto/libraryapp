@@ -1,0 +1,204 @@
+<div class="header-banner" data-controller="header">
+  <div class="container">
+    <div class="level py-2">
+      <div class="level-left">
+        <div class="level-item">
+          <% if user_signed_in? %>
+            <div class="user-status has-text-white">
+              <span class="icon-text">
+                <span class="icon">
+                  <i class="fas <%= current_user.library_personnel? ? 'fa-id-badge' : 'fa-user' %>"></i>
+                </span>
+                <span class="user-info">
+                  Logged in as 
+                  <span class="role-badge <%= current_user.library_personnel? ? 'is-personnel' : 'is-user' %>">
+                    <%= current_user.role.humanize %>
+                  </span>
+                  <strong class="user-name"><%= current_user.full_name %></strong>
+                </span>
+              </span>
+            </div>
+          <% else %>
+            <div class="guest-status has-text-white">
+              <span class="icon-text">
+                <span class="icon">
+                  <i class="fas fa-user-slash"></i>
+                </span>
+                <span>Not logged in</span>
+              </span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="level-right">
+        <div class="level-item">
+          <% if user_signed_in? %>
+            <%= button_to destroy_user_session_path, 
+                method: :delete, 
+                class: "button is-small is-light is-outlined logout-button",
+                data: { turbo: false } do %>
+              <span class="icon-text">
+                <span class="icon">
+                  <i class="fas fa-sign-out-alt"></i>
+                </span>
+                <span>Logout</span>
+              </span>
+            <% end %>
+          <% else %>
+            <%= link_to new_user_session_path, 
+                class: "button is-small is-light is-outlined login-button" do %>
+              <span class="icon-text">
+                <span class="icon">
+                  <i class="fas fa-sign-in-alt"></i>
+                </span>
+                <span>Login</span>
+              </span>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Flash Messages -->
+  <% if flash.any? %>
+    <div class="flash-messages" data-header-target="flashMessages">
+      <% flash.each do |type, message| %>
+        <div class="notification <%= flash_class(type) %> is-light mb-0" 
+             data-controller="notification"
+             data-notification-exit-delay-value="5000">
+          <div class="container">
+            <button class="delete" data-action="notification#close"></button>
+            <div class="icon-text">
+              <span class="icon">
+                <i class="fas <%= flash_icon(type) %>"></i>
+              </span>
+              <span><%= message %></span>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<% content_for :styles do %>
+  <style>
+    .header-banner {
+      background: linear-gradient(135deg, #485fc7 0%, #3e54b8 100%);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-status, .guest-status {
+      font-size: 0.95rem;
+      letter-spacing: 0.3px;
+    }
+
+    .user-info {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .role-badge {
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .role-badge.is-personnel {
+      background-color: #ff3860;
+      color: white;
+    }
+
+    .role-badge.is-user {
+      background-color: #00d1b2;
+      color: white;
+    }
+
+    .user-name {
+      font-weight: 600;
+      color: #f5f5f5;
+    }
+
+    .logout-button, .login-button {
+      border-color: rgba(255, 255, 255, 0.5);
+      color: white;
+      transition: all 0.3s ease;
+    }
+
+    .logout-button:hover, .login-button:hover {
+      background-color: white;
+      color: #485fc7;
+      border-color: white;
+    }
+
+    .flash-messages {
+      position: relative;
+      z-index: 40;
+    }
+
+    .notification {
+      margin-bottom: 0;
+      padding: 0.75rem;
+      animation: slideDown 0.5s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .notification.is-success {
+      background-color: #ebfffc;
+      border-bottom: 3px solid #00d1b2;
+    }
+
+    .notification.is-danger {
+      background-color: #feecf0;
+      border-bottom: 3px solid #ff3860;
+    }
+
+    .notification.is-warning {
+      background-color: #fffbeb;
+      border-bottom: 3px solid #ffdd57;
+    }
+
+    .notification.is-info {
+      background-color: #ebf5ff;
+      border-bottom: 3px solid #3298dc;
+    }
+  </style>
+<% end %>
+
+<% content_for :scripts do %>
+  <script>
+    import { Controller } from "@hotwired/stimulus"
+
+    export default class extends Controller {
+      static targets = ["flashMessages"]
+
+      connect() {
+        // Automatically hide flash messages after 5 seconds
+        setTimeout(() => {
+          this.flashMessagesTarget.querySelectorAll('.notification').forEach(notification => {
+            notification.style.animation = 'slideUp 0.5s ease-out forwards'
+            setTimeout(() => {
+              notification.remove()
+            }, 500)
+          })
+        }, 5000)
+      }
+    }
+  </script>
+<% end %> 
