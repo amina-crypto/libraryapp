@@ -20,16 +20,12 @@
       <div class="column is-4">
         <div class="card has-background-dark">
           <div class="card-image">
-            <figure class="image is-4by3">
-              <% if @resource.cover_image.attached? %>
-                <%= image_tag @resource.cover_image %>
-              <% else %>
-                <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Resource cover">
-              <% end %>
+            <figure class="image is-2by3">
+              <%= image_tag resource_image_url(@resource), alt: @resource.title, class: "book-cover" %>
             </figure>
           </div>
 
-          <!-- Availability Status -->
+          <!-- Availability Status and Reserve Button -->
           <div class="card-content">
             <div class="level">
               <div class="level-left">
@@ -66,7 +62,9 @@
             <div class="tags are-medium mb-5">
               <span class="tag is-warning"><%= @resource.type %></span>
               <span class="tag is-info"><%= @resource.language %></span>
-              <span class="tag is-success"><%= @resource.category.name %></span>
+              <% @resource.categories.each do |category| %>
+                <span class="tag is-success"><%= category.name %></span>
+              <% end %>
               <span class="tag is-light"><%= @resource.publish_year %></span>
             </div>
 
@@ -93,6 +91,20 @@
                 </div>
               </div>
             <% end %>
+
+            <!-- Categories -->
+            <div class="mt-5">
+              <strong class="is-size-5">Categories:</strong>
+              <div class="tags mt-2">
+                <% if @resource.categories.any? %>
+                  <% @resource.category_names.each do |name| %>
+                    <span class="tag is-medium is-info is-light"><%= name %></span>
+                  <% end %>
+                <% else %>
+                  <span class="tag is-medium is-light">No categories assigned</span>
+                <% end %>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -107,7 +119,100 @@
             </div>
           </div>
         </div>
+
+        <!-- Action Buttons Section -->
+        <div class="mt-6 buttons-container">
+          <% if @is_available %>
+            <%= link_to new_user_session_path, class: "button is-fullwidth is-medium is-success" do %>
+              <span class="icon">
+                <i class="fas fa-check-circle"></i>
+              </span>
+              <span>Available for Reservation</span>
+            <% end %>
+
+            <%= link_to new_user_session_path, class: "button is-primary is-fullwidth is-medium mt-3" do %>
+              <span class="icon">
+                <i class="fas fa-bookmark"></i>
+              </span>
+              <span>Reserve This Resource</span>
+            <% end %>
+          <% else %>
+            <div class="button is-fullwidth is-medium is-danger">
+              <span class="icon">
+                <i class="fas fa-times-circle"></i>
+              </span>
+              <span>
+                Currently Unavailable
+                <% if @current_reservation %>
+                  (Reserved until <%= @current_reservation.expires_at.strftime("%I:%M %p") %>)
+                <% elsif @current_loan %>
+                  (On loan until <%= @return_date.strftime("%B %d, %Y") %>)
+                <% end %>
+              </span>
+            </div>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>
-</div> 
+</div>
+
+<style>
+  .buttons-container {
+    max-width: 400px;
+    margin: 2rem auto;
+  }
+
+  .button {
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .button.is-success {
+    background-color: #48c774;
+  }
+
+  .button.is-danger {
+    background-color: #f14668;
+  }
+
+  .button.is-primary {
+    background-color: #3273dc;
+  }
+
+  .button .icon {
+    margin-right: 0.5rem;
+  }
+
+  .mt-3 {
+    margin-top: 1rem;
+  }
+
+  .card-image figure {
+    padding: 1rem;
+    min-height: 500px;
+  }
+
+  .book-cover {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .card {
+    height: 100%;
+  }
+
+  .image.is-2by3 {
+    padding-top: 150%;
+  }
+</style> 
